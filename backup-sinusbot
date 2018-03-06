@@ -1,0 +1,59 @@
+#!/bin/bash
+
+BASEDIR=$(dirname "$0")
+
+
+#Config
+CONFIG="${BASEDIR}/backup.conf"
+
+echo "$CONFIG"
+
+if [ ! -f "${CONFIG}" ]
+then
+	echo "Config-Datei nicht gefunden!"
+	exit
+fi
+
+USER=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^USER/{print $3;exit}' "${CONFIG}")
+DIR_ROOT=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_ROOT/{print $3;exit}' "${CONFIG}")
+DIR_BACKUP=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
+
+systemctl stop sinusbot.service
+
+DATE=$(date +%Y-%m-%d-%H%M%S)
+	
+if [ `whoami` = root ]
+then
+	su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 --exclude=$DIR_BACKUP $DIR_ROOT"
+else
+	cd $DIR_ROOT
+	tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 --exclude=$DIR_BACKUP $DIR_ROOT
+fi
+
+systemctl start sinusbot.service
+
+let MAXCOUNT=7
+
+let COUNTER=0
+ 
+for BACKUPFILE in $DIR_BACKUP/*; do
+	let COUNTER=$COUNTER+1
+	echo $BACKUPFILE
+done
+echo "Backup count:" $COUNTER
+if test $COUNTER -gt $MAXCOUNT;
+then
+	echo "Too many backups, forcing deletion..."
+	let NEWCOUNTER=0
+	for DELETEFILE in $DIR_BACKUP*; do
+		let NEWCOUNTER=$NEWCOUNTER+1
+		let TEMP=$COUNTER-$MAXCOUNT
+		if test $NEWCOUNTER -le $TEMP;
+		then
+			rm $DELETEFILE
+			echo "Deleting file" $DELETEFILE
+		fi
+	done
+else
+	echo "Nothing to do."
+fi
