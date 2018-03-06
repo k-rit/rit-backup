@@ -1,0 +1,45 @@
+#!/bin/bash
+# remove old backups automatically
+# Version 1.0 -  03.04.2014
+# http://www.denniswilmsmann.de/2014/04/alte-backups-unter-linux-automatisch-loeschen/
+# 
+#	EDITED by rilling.IT
+#
+# how many backups should be kept?
+
+#Config
+BASEDIR=$(dirname "$0")
+CONFIG="${BASEDIR}/backup.conf"
+
+if [ ! -f "${CONFIG}" ]
+then
+	echo "Config-Datei nicht gefunden!"
+	exit
+fi
+BACKUP_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONFIG}")
+
+let MAXCOUNT=7
+
+let COUNTER=0
+ 
+for BACKUPFILE in $BACKUP_DIR/*; do
+	let COUNTER=$COUNTER+1
+	echo $BACKUPFILE
+done
+echo "Backup count:" $COUNTER
+if test $COUNTER -gt $MAXCOUNT;
+then
+	echo "Too many backups, forcing deletion..."
+	let NEWCOUNTER=0
+	for DELETEFILE in $BACKUP_DIR*; do
+		let NEWCOUNTER=$NEWCOUNTER+1
+		let TEMP=$COUNTER-$MAXCOUNT
+		if test $NEWCOUNTER -le $TEMP;
+		then
+			rm $DELETEFILE
+			echo "Deleting file" $DELETEFILE
+		fi
+	done
+else
+	echo "Nothing to do."
+fi
