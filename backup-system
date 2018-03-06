@@ -1,0 +1,77 @@
+#!/bin/bash
+#   -----------------------------------------------------------------------------------------
+#   Copyright (c) 2015 rilling.IT
+#   -----------------------------------------------------------------------------------------
+#   Released under the GNU General Public License 
+#   -----------------------------------------------------------------------------------------
+
+if [ "$1" == "f" ] || [ "$1" == "full" ] || [ "$1" == "Full" ]
+then
+	ART="Full"
+else
+	ART="System"
+fi
+#Config
+CONFIG=backup.conf
+
+if [ ! -f "$CONFIG" ]
+then
+	echo "Config-Datei nicht gefunden!"
+	exit
+fi
+
+MYSQL_BEN=$(awk '/^\[System\]/{f=1} f==1&&/^MYSQL_BEN/{print $3;exit}' "${CONFIG}")
+MYSQL_PW=$(awk '/^\[System\]/{f=1} f==1&&/^MYSQL_PW/{print $3;exit}' "${CONFIG}")
+BACKUP_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONFIG}")
+SQL_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^SQL_DIR/{print $3;exit}' "${CONFIG}")
+
+#Datum generieren
+DATE=$(date +%Y-%m-%d-%H%M%S)
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+
+#Hostname
+NAME=$(hostname)
+
+if [ ! -d "$BACKUP_DIR" ]
+then
+	mkdir ${BACKUP_DIR}
+fi
+
+#Alte MYSQL Sicherung L�schen
+rm $SQL_DIR/backup-all-databases-*.sql
+echo "[${DATE_H}] - Das alte MYSQL Backup wurde entfernt!"
+
+#SQL Sichern
+mysqldump -E -u ${MYSQL_BEN} -p${MYSQL_PW} --all-databases > $SQL_DIR/backup-all-databases-$DATE.sql
+# 
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - MYSQL Backup wurde erstellt"
+sleep 2s
+
+# Hier Verzeichnisse auflisten, die gesichert werden sollen.
+# Dies ist nur ein Beispiel - bitte an eigene Bedürfnisse anpassen.
+# Bei Verzeichnissen, für die der User keine durchgehenden Leserechte hat (z.B. /etc) sind Fehler vorprogrammiert.
+# Pfade sollte nicht mit "/" enden!
+SOURCE="$SQL_DIR /var/www /etc /root /opt /var/spool/cron/crontabs"
+
+systemctl stop apache2
+systemctl stop mysql
+
+EXCLUDE_DIR="$BACKUP_DIR"
+#EXCLUDE_DIR2=""
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+
+echo "[${DATE_H}] - Backup-${ART} gestartet..." 
+if [ ${ART} == "Full" ]
+then
+	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system --exclude=$EXCLUDE_DIR /
+else
+	tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE.tar.bz2 --exclude=$EXCLUDE_DIR $SOURCE
+fi
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+
+systemctl start mysql
+systemctl start apache2
+
+echo "[${DATE_H}] - Backup-${ART} erfolgreich abgeschlossen :)"

@@ -1,0 +1,11 @@
+[System]
+MYSQL_BEN=user
+MYSQL_PW=password
+
+# pfad sollte nicht mit "/" enden!
+# Dies ist nur ein Beispiel - bitte anpassen.
+# Man muss schreibberechtigt im entsprechenden Verzeichnis sein.
+BACKUP_DIR=/root/backup
+SQL_DIR=/var/lib/mysql
+
+
