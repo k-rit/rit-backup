@@ -1,12 +1,8 @@
 #!/bin/bash
 
-BASEDIR=$(dirname "$0")
-
-
 #Config
+BASEDIR=$(dirname "$0")
 CONFIG="${BASEDIR}/backup.conf"
-
-echo "$CONFIG"
 
 if [ ! -f "${CONFIG}" ]
 then
