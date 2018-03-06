@@ -11,10 +11,12 @@ then
 else
 	ART="System"
 fi
-#Config
-CONFIG=backup.conf
 
-if [ ! -f "$CONFIG" ]
+#Config
+BASEDIR=$(dirname "$0")
+CONFIG="${BASEDIR}/backup.conf"
+
+if [ ! -f "${CONFIG}" ]
 then
 	echo "Config-Datei nicht gefunden!"
 	exit
