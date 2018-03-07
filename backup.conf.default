@@ -8,6 +8,7 @@ MYSQL_BEN = user
 MYSQL_PW = password
 BACKUP_DIR = /root/backup
 SQL_DIR = /var/lib/mysql
+SOURCE = "/var/www /etc /opt /var/spool/cron/crontabs"
 
 [Sinusbot]
 USER = sinusbot
