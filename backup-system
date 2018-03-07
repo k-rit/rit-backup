@@ -29,6 +29,8 @@ SQL_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^SQL_DIR/{print $3;exit}' "${CONFIG}")
 SOURCE=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^SOURCE/{print $2;exit}' "${CONFIG}")
 SOURCE="$SQL_DIR $SOURCE"
 
+SINUSBOT_BACKUPDIR=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
+
 #Datum generieren
 DATE=$(date +%Y-%m-%d-%H%M%S)
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
@@ -55,16 +57,17 @@ sleep 2s
 systemctl stop apache2
 systemctl stop mysql
 
-EXCLUDE_DIR="$BACKUP_DIR"
-#EXCLUDE_DIR2=""
+if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR=""; fi
+if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR2="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR2=""; fi
+
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
 echo "[${DATE_H}] - Backup-${ART} gestartet..." 
 if [ ${ART} == "Full" ]
 then
-	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system --exclude=$EXCLUDE_DIR /
+	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR /
 else
-	tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE.tar.bz2 --exclude=$EXCLUDE_DIR $SOURCE
+	tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE.tar.bz2 $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
 fi
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
