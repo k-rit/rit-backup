@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ ! $1 ] ; then exit ; else DIR_BACKUP=$1; fi
+if [ ! $2 ] ; then let MAXCOUNT=2; else let MAXCOUNT=$2; fi
+
+let COUNTER=0
+
+for BACKUPFILE in $DIR_BACKUP/*; do
+	let COUNTER=$COUNTER+1
+	echo $BACKUPFILE
+done
+echo "Backup count:" $COUNTER
+if test $COUNTER -gt $MAXCOUNT;
+then
+	echo "Too many backups, forcing deletion..."
+	let NEWCOUNTER=0
+	for DELETEFILE in $DIR_BACKUP*; do
+		let NEWCOUNTER=$NEWCOUNTER+1	
+		let TEMP=$COUNTER-$MAXCOUNT
+		if test $NEWCOUNTER -le $TEMP;
+		then
+			rm $DELETEFILE
+			echo "Deleting file" $DELETEFILE
+		fi
+	done
+else
+	echo "Nothing to do."
+fi
