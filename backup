@@ -9,8 +9,6 @@ then
 	exit
 fi
 
-chmod mod 754 ${BASEDIR}/backup-*
-
 SYS_ON=$(awk '/^\[System\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
 SIN_ON=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
 CLO_ON=$(awk '/^\[Cloud\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
