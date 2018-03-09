@@ -1,0 +1,35 @@
+#!/bin/bash
+
+echo "Starte $0"
+#Config
+BASEDIR=$(dirname "$0")
+CONFIG="${BASEDIR}/backup.conf"
+if [ ! -f ${CONFIG} ]
+then
+	echo "Config-Datei nicht gefunden!"
+	exit
+fi
+
+DIRS=$(awk -F\" '/^\[Cloud\]/{f=1} f==1&&/^DIRS/{print $2;exit}' "${CONFIG}")
+BACKUP_DIR=$(awk '/^\[Cloud\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONFIG}")
+LOCAL_BACKUPS_NUM=$(awk '/^\[Cloud\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
+
+NUM=$(echo ${DIRS} | awk '{print NF}')
+NUM=$((NUM-1))
+IFS=' ' read -r -a DIR_ROOT <<< "$DIRS"
+
+DATE=$(date +%Y-%m-%d-%H%M%S)
+
+for i in $(eval echo "{0..$NUM}")
+do
+	if [ ! -d ${DIR_ROOT[$i]} ]; then exit; fi
+	echo "Doing Backup of '${DIR_ROOT[$i]}'"
+	NAME=$(basename ${DIR_ROOT[$i]})
+	DATE=$(date +%Y-%m-%d-%H%M%S)
+	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi
+	tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE.tar.bz2 ${DIR_ROOT[$i]}
+	${BASEDIR}/backup-remove $BACKUP_DIR/$NAME $LOCAL_BACKUPS_NUM
+done
+
+#echo $DIR
+exit
