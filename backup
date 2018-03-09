@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#Config
+BASEDIR=$(dirname "$0")
+CONFIG="${BASEDIR}/backup.conf"
+if [ ! -f ${CONFIG} ]
+then
+	echo "Config-Datei nicht gefunden!"
+	exit
+fi
+
+chmod mod 754 ${BASEDIR}/backup-*
+
+SYS_ON=$(awk '/^\[System\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
+SIN_ON=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
+CLO_ON=$(awk '/^\[Cloud\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
+DOW_ON=$(awk '/^\[Download\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
+CPY_ON=$(awk '/^\[Copy\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
+
+
+cd ${BASEDIR}
+chmod 754 backup-*
+if [ $SYS_ON == "yes" ]; then ./backup-system ; fi
+if [ $SIN_ON == "yes" ]; then ./backup-sinusbot ; fi
+if [ $CLO_ON == "yes" ]; then ./backup-cloud ; fi
+if [ $CPY_ON == "yes" ]; then ./backup-copy ; fi
+

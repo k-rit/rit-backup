@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Starte $0"
 #Config
 BASEDIR=$(dirname "$0")
 CONFIG="${BASEDIR}/backup.conf"
@@ -13,6 +14,7 @@ fi
 USER=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^USER/{print $3;exit}' "${CONFIG}")
 DIR_ROOT=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_ROOT/{print $3;exit}' "${CONFIG}")
 DIR_BACKUP=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
+LOCAL_BACKUPS_NUM=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
 
 systemctl stop sinusbot.service
 
@@ -28,28 +30,5 @@ fi
 
 systemctl start sinusbot.service
 
-let MAXCOUNT=7
+${BASEDIR}/backup-remove $DIR_BACKUP $LOCAL_BACKUPS_NUM
 
-let COUNTER=0
- 
-for BACKUPFILE in $DIR_BACKUP/*; do
-	let COUNTER=$COUNTER+1
-	echo $BACKUPFILE
-done
-echo "Backup count:" $COUNTER
-if test $COUNTER -gt $MAXCOUNT;
-then
-	echo "Too many backups, forcing deletion..."
-	let NEWCOUNTER=0
-	for DELETEFILE in $DIR_BACKUP*; do
-		let NEWCOUNTER=$NEWCOUNTER+1
-		let TEMP=$COUNTER-$MAXCOUNT
-		if test $NEWCOUNTER -le $TEMP;
-		then
-			rm $DELETEFILE
-			echo "Deleting file" $DELETEFILE
-		fi
-	done
-else
-	echo "Nothing to do."
-fi
