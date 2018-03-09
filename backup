@@ -23,5 +23,6 @@ chmod 754 backup-*
 if [ $SYS_ON == "yes" ]; then ./backup-system ; fi
 if [ $SIN_ON == "yes" ]; then ./backup-sinusbot ; fi
 if [ $CLO_ON == "yes" ]; then ./backup-cloud ; fi
+if [ $DOW_ON == "yes" ]; then ./backup-download ; fi
 if [ $CPY_ON == "yes" ]; then ./backup-copy ; fi
 

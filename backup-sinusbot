@@ -16,7 +16,8 @@ DIR_ROOT=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_ROOT/{print $3;exit}' "${CONFIG
 DIR_BACKUP=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
 LOCAL_BACKUPS_NUM=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
 
-systemctl stop sinusbot.service
+#systemctl stop sinusbot.service
+${BASEDIR}/backup-prog sinusbot stop
 
 DATE=$(date +%Y-%m-%d-%H%M%S)
 	
@@ -28,7 +29,8 @@ else
 	tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 --exclude=$DIR_BACKUP $DIR_ROOT
 fi
 
-systemctl start sinusbot.service
+#systemctl start sinusbot.service
+${BASEDIR}/backup-prog sinusbot start
 
 ${BASEDIR}/backup-remove $DIR_BACKUP $LOCAL_BACKUPS_NUM
 

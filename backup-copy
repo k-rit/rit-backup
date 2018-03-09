@@ -20,4 +20,4 @@ do
 	rsync -aqu ${DIR_FROM}/${DIR} ${DIR_TO}/${DIR}
 	${BASEDIR}/backup-remove ${DIR_TO}/${DIR} $LOCAL_BACKUPS_NUM
 done
-
+exit
