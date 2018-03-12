@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "Starte $0"
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starte $0"
+
 #Config
 BASEDIR=$(dirname "$0")
 CONFIG="${BASEDIR}/backup.conf"

@@ -12,7 +12,8 @@ else
 	ART="System"
 fi
 
-echo "Starte $0"
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starte $0"
 #Config
 BASEDIR=$(dirname "$0")
 CONFIG="${BASEDIR}/backup.conf"
@@ -30,7 +31,7 @@ SQL_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^SQL_DIR/{print $3;exit}' "${CONFIG}")
 SOURCE=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^SOURCE/{print $2;exit}' "${CONFIG}")
 SOURCE="$SQL_DIR $SOURCE"
 
-SINUSBOT_BACKUPDIR=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
+SINUSBOT_BACKUPDIR=$(awk '/^\[System\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
 LOCAL_BACKUPS_NUM=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
 
 #Datum generieren
@@ -56,8 +57,8 @@ DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 echo "[${DATE_H}] - MYSQL Backup wurde erstellt"
 sleep 2s
 
-${BASEDIR}/backup-prog apache2 stop
-${BASEDIR}/backup-prog mysql stop
+#${BASEDIR}/backup-prog apache2 stop
+#${BASEDIR}/backup-prog mysql stop
 #systemctl stop apache2
 #systemctl stop mysql
 
@@ -76,8 +77,8 @@ fi
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
-${BASEDIR}/backup-prog mysql start
-${BASEDIR}/backup-prog apache2 start
+#${BASEDIR}/backup-prog mysql start
+#${BASEDIR}/backup-prog apache2 start
 #systemctl start mysql
 #systemctl start apache2
 
