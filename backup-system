@@ -31,8 +31,8 @@ SQL_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^SQL_DIR/{print $3;exit}' "${CONFIG}")
 SOURCE=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^SOURCE/{print $2;exit}' "${CONFIG}")
 SOURCE="$SQL_DIR $SOURCE"
 
-SINUSBOT_BACKUPDIR=$(awk '/^\[System\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
-LOCAL_BACKUPS_NUM=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
+SINUSBOT_BACKUPDIR=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
+LOCAL_BACKUPS_NUM=$(awk '/^\[System\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
 
 #Datum generieren
 DATE=$(date +%Y-%m-%d-%H%M%S)

@@ -14,7 +14,7 @@ if test $COUNTER -gt $MAXCOUNT;
 then
 	echo "Too many backups, forcing deletion..."
 	let NEWCOUNTER=0
-	for DELETEFILE in $DIR_BACKUP*; do
+	for DELETEFILE in $DIR_BACKUP/*; do
 		let NEWCOUNTER=$NEWCOUNTER+1	
 		let TEMP=$COUNTER-$MAXCOUNT
 		if test $NEWCOUNTER -le $TEMP;
