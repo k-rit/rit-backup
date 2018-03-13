@@ -16,7 +16,7 @@ DIR_TO=$(awk '/^\[Copy\]/{f=1} f==1&&/^DIR_TO/{print $3;exit}' "${CONFIG}")
 LOCAL_BACKUPS_NUM=$(awk '/^\[Copy\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
 
 cd $DIR_FROM
-for DIR in */
+for DIR in *
 do
 	rsync -aqu ${DIR_FROM}/${DIR} ${DIR_TO}/${DIR}
 	${BASEDIR}/backup-remove ${DIR_TO}/${DIR} $LOCAL_BACKUPS_NUM
