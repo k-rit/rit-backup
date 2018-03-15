@@ -21,13 +21,18 @@ LOCAL_BACKUPS_NUM=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $
 ${BASEDIR}/backup-prog sinusbot stop
 
 DATE=$(date +%Y-%m-%d-%H%M%S)
-	
+
+# Temp start
+TODAY=`date +%u`
+TIMESTAMP="${BASEDIR}/$0-timestamp.dat"
+# Temp end
+
 if [ `whoami` = root ]
 then
-	su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 --exclude=$DIR_BACKUP $DIR_ROOT"
+	su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
 else
 	cd $DIR_ROOT
-	tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 --exclude=$DIR_BACKUP $DIR_ROOT
+	tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
 fi
 
 #systemctl start sinusbot.service
