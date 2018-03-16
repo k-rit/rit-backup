@@ -34,6 +34,7 @@ do
 	DATE=$(date +%Y-%m-%d-%H%M%S)
 	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi
 	
+	if [ ! -f ${TIMESTAMP} ]; then TODAY=1; fi
 	if [ $TODAY == 1 ]
 	then
 		rm ${TIMESTAMP}

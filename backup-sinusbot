@@ -18,7 +18,7 @@ DIR_BACKUP=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CO
 LOCAL_BACKUPS_NUM=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
 
 #systemctl stop sinusbot.service
-${BASEDIR}/backup-prog sinusbot stop
+#${BASEDIR}/backup-prog sinusbot stop
 
 DATE=$(date +%Y-%m-%d-%H%M%S)
 
@@ -27,16 +27,31 @@ TODAY=`date +%u`
 TIMESTAMP="$DIR_ROOT/$0-timestamp.dat"
 # Temp end
 
+
+if [ ! -f ${TIMESTAMP} ]; then TODAY=1; fi
 if [ `whoami` = root ]
 then
-	su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
+	if [ $TODAY == 1 ]
+	then
+		rm ${TIMESTAMP}
+		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-ful-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
+	else
+		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-inc-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
+	fi
 else
-	cd $DIR_ROOT
-	tar -cjpf $DIR_BACKUP/sinusbot-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
+	if [ $TODAY == 1 ]
+	then
+		rm ${TIMESTAMP}
+		cd $DIR_ROOT
+		tar -cjpf $DIR_BACKUP/sinusbot-ful-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
+	else
+		cd $DIR_ROOT
+		tar -cjpf $DIR_BACKUP/sinusbot-inc-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
+	fi
 fi
 
 #systemctl start sinusbot.service
-${BASEDIR}/backup-prog sinusbot start
+#${BASEDIR}/backup-prog sinusbot start
 
 ${BASEDIR}/backup-remove $DIR_BACKUP $LOCAL_BACKUPS_NUM
 
