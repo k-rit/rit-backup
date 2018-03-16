@@ -67,12 +67,23 @@ if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR2="--exclude=$SINUSBOT_BACKUPDIR"
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
+# Temp start
+TODAY=`date +%u`
+TIMESTAMP="${BASEDIR}/$0-timestamp.dat"
+# Temp end
+
 echo "[${DATE_H}] - Backup-${ART} gestartet..." 
 if [ ${ART} == "Full" ]
 then
 	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 /
 else
-	tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE.tar.bz2 $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
+	if [ $TODAY == 1 ]
+	then
+		rm ${TIMESTAMP}
+		tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
+	else
+		tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-Inc-$DATE.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
+	fi
 fi
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)

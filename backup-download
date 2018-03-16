@@ -12,7 +12,6 @@ then
 	exit
 fi
 
-EX_DIR=$(awk '/^\[Download\]/{f=1} f==1&&/^EX_DIR/{print $3;exit}' "${CONFIG}")
 IN_DIR=$(awk '/^\[Download\]/{f=1} f==1&&/^IN_DIR/{print $3;exit}' "${CONFIG}")
 USER=$(awk '/^\[Download\]/{f=1} f==1&&/^USER/{print $3;exit}' "${CONFIG}")
 GROUP=$(awk '/^\[Download\]/{f=1} f==1&&/^GROUP/{print $3;exit}' "${CONFIG}")
@@ -21,13 +20,14 @@ LOCAL_BACKUPS_NUM=$(awk '/^\[Download\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $
 
 for i in $(eval echo "{1..$NUM}")
 do
+	EX_DIR=$(awk '/^\[Download\]/{f=1} f==1&&/^EX_DIR'${i}'/{print $3;exit}' "${CONFIG}")
 	PW=$(awk '/^\[Download\]/{f=1} f==1&&/^PW'${i}'/{print $3;exit}' "${CONFIG}" | base64 --decode)
 	IP=$(awk '/^\[Download\]/{f=1} f==1&&/^IP'${i}'/{print $3;exit}' "${CONFIG}")
 	PORT=$(awk '/^\[Download\]/{f=1} f==1&&/^PORT'${i}'/{print $3;exit}' "${CONFIG}")
 	NAME=$(awk '/^\[Download\]/{f=1} f==1&&/^NAME'${i}'/{print $3;exit}' "${CONFIG}")
 	sshpass -p $PW rsync --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
 	#--progress --stats
-	${BASEDIR}/backup-remove $BACKUP_DIR $LOCAL_BACKUPS_NUM
+	${BASEDIR}/backup-remove ${IN_DIR} $LOCAL_BACKUPS_NUM
 done
 
 exit

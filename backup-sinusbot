@@ -24,7 +24,7 @@ DATE=$(date +%Y-%m-%d-%H%M%S)
 
 # Temp start
 TODAY=`date +%u`
-TIMESTAMP="${BASEDIR}/$0-timestamp.dat"
+TIMESTAMP="$DIR_ROOT/$0-timestamp.dat"
 # Temp end
 
 if [ `whoami` = root ]

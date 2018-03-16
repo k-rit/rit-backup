@@ -19,6 +19,11 @@ NUM=$(echo ${DIRS} | awk '{print NF}')
 NUM=$((NUM-1))
 IFS=' ' read -r -a DIR_ROOT <<< "$DIRS"
 
+# Temp start
+TODAY=`date +%u`
+TIMESTAMP="${BASEDIR}/$0-timestamp.dat"
+# Temp end
+
 DATE=$(date +%Y-%m-%d-%H%M%S)
 
 for i in $(eval echo "{0..$NUM}")
@@ -28,7 +33,15 @@ do
 	NAME=$(basename ${DIR_ROOT[$i]})
 	DATE=$(date +%Y-%m-%d-%H%M%S)
 	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi
-	tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE.tar.bz2 ${DIR_ROOT[$i]}
+	
+	if [ $TODAY == 1 ]
+	then
+		rm ${TIMESTAMP}
+		tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
+	else
+		tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
+	fi
+	
 	${BASEDIR}/backup-remove $BACKUP_DIR/$NAME $LOCAL_BACKUPS_NUM
 done
 

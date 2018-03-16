@@ -12,7 +12,7 @@ BACKUP_DIR = /root/backup
 SQL_DIR = /var/lib/mysql
 SOURCE = "/var/www /etc /opt /var/spool/cron/crontabs"
 ON = no
-LOCAL_BACKUPS_NUM = 1
+LOCAL_BACKUPS_NUM = 7
 
 [Sinusbot]
 USER = sinusbot
@@ -25,34 +25,36 @@ LOCAL_BACKUPS_NUM = 7
 DIRS = "/data/CloudHome /data/CloudOffice"
 BACKUP_DIR = /data/backups
 ON = no
-LOCAL_BACKUPS_NUM = 3
+LOCAL_BACKUPS_NUM = 7
 
 [Copy]
 DIR_FROM = /data/backups
 DIR_TO = /safe/Sicherung
 ON = no
-LOCAL_BACKUPS_NUM = 7
+LOCAL_BACKUPS_NUM = 28
 
 [Download]
 ON = no
-EX_DIR = /root/backup
 IN_DIR = /data/backups
 USER = user
 GROUP = users
 NUM = 3
-LOCAL_BACKUPS_NUM = 3
+LOCAL_BACKUPS_NUM = 7
 
 IP1 = 127.0.0.1
 PW1 = ChangeMe
 PORT1 = 22
 NAME1 = MyServer1
+EX_DIR1 = /root/backup
 
 IP2 = 127.0.0.1
 PW2 = ChangeMe
 PORT2 = 22
 NAME2 = MyServer1
+EX_DIR2 = /root/backup
 
 IP3 = 127.0.0.1
 PW3 = ChangeMe
 PORT3 = 22
 NAME3 = MyServer1
+EX_DIR3 = /root/backup
