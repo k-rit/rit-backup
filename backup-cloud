@@ -40,9 +40,9 @@ do
 	if [ $TODAY == 1 ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
+		tar -cjpf $BACKUP_DIR/$NAME/$NAME-ful-$DATE.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
 	else
-		tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
+		tar -cjpf $BACKUP_DIR/$NAME/$NAME-inc-$DATE.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
 	fi
 	
 	${BASEDIR}/backup-remove $BACKUP_DIR/$NAME $LOCAL_BACKUPS_NUM
