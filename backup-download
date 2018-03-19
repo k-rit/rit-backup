@@ -27,7 +27,7 @@ do
 	NAME=$(awk '/^\[Download\]/{f=1} f==1&&/^NAME'${i}'/{print $3;exit}' "${CONFIG}")
 	sshpass -p $PW rsync --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
 	#--progress --stats
-	${BASEDIR}/backup-remove ${IN_DIR} $LOCAL_BACKUPS_NUM
+	${BASEDIR}/backup-remove ${IN_DIR}/${NAME} $LOCAL_BACKUPS_NUM
 done
 
 exit

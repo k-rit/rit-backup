@@ -21,7 +21,9 @@ IFS=' ' read -r -a DIR_ROOT <<< "$DIRS"
 
 # Temp start
 TODAY=`date +%u`
-TIMESTAMP="${BASEDIR}/$0-timestamp.dat"
+BASENAME="$(basename $0)"
+if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
+TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
 # Temp end
 
 DATE=$(date +%Y-%m-%d-%H%M%S)

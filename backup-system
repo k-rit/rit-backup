@@ -16,6 +16,7 @@ DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 echo "[${DATE_H}] - Starte $0"
 #Config
 BASEDIR=$(dirname "$0")
+echo "${BASEDIR}"
 CONFIG="${BASEDIR}/backup.conf"
 
 if [ ! -f "${CONFIG}" ]
@@ -69,7 +70,9 @@ DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
 # Temp start
 TODAY=`date +%u`
-TIMESTAMP="${BASEDIR}/$0-timestamp.dat"
+BASENAME="$(basename $0)"
+if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
+TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
 # Temp end
 
 echo "[${DATE_H}] - Backup-${ART} gestartet..." 
@@ -103,3 +106,4 @@ ${BASEDIR}/backup-remove $BACKUP_DIR $LOCAL_BACKUPS_NUM
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 echo "[${DATE_H}] - Done!"
+
