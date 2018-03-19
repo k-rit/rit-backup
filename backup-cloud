@@ -23,7 +23,6 @@ IFS=' ' read -r -a DIR_ROOT <<< "$DIRS"
 TODAY=`date +%u`
 BASENAME="$(basename $0)"
 if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
-TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
 # Temp end
 
 DATE=$(date +%Y-%m-%d-%H%M%S)
@@ -34,6 +33,7 @@ do
 	echo "Doing Backup of '${DIR_ROOT[$i]}'"
 	NAME=$(basename ${DIR_ROOT[$i]})
 	DATE=$(date +%Y-%m-%d-%H%M%S)
+	TIMESTAMP="${BASEDIR2}${BASENAME}-$NAME-timestamp.dat"
 	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi
 	
 	if [ ! -f ${TIMESTAMP} ]; then TODAY=1; fi
