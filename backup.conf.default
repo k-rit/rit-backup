@@ -13,6 +13,8 @@ SQL_DIR = /var/lib/mysql
 SOURCE = "/var/www /etc /opt /var/spool/cron/crontabs"
 ON = no
 LOCAL_BACKUPS_NUM = 7
+# Mo=1;Di=2;Mi=3;Do=4;Fr=5;Sa=6;So=7;
+FULL_BACKUP_DAY = 1
 
 [Sinusbot]
 USER = sinusbot
@@ -20,6 +22,8 @@ DIR_ROOT = /opt/sinusbot
 DIR_BACKUP = /opt/sinusbot/backup
 ON = no
 LOCAL_BACKUPS_NUM = 7
+# Mo=1;Di=2;Mi=3;Do=4;Fr=5;Sa=6;So=7;
+FULL_BACKUP_DAY = 1
 
 [Cloud]
 DIRS = "/data/CloudHome /data/CloudOffice"

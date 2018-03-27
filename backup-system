@@ -31,6 +31,7 @@ BACKUP_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONF
 SQL_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^SQL_DIR/{print $3;exit}' "${CONFIG}")
 SOURCE=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^SOURCE/{print $2;exit}' "${CONFIG}")
 SOURCE="$SQL_DIR $SOURCE"
+FULL_BACKUP_DAY=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^FULL_BACKUP_DAY=SOURCE/{print $2;exit}' "${CONFIG}")
 
 SINUSBOT_BACKUPDIR=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
 LOCAL_BACKUPS_NUM=$(awk '/^\[System\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
@@ -80,8 +81,8 @@ if [ ${ART} == "Full" ]
 then
 	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 /
 else
-	if [ ! -f ${TIMESTAMP} ]; then TODAY=1; fi
-	if [ $TODAY == 1 ]
+	if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
+	if [ $TODAY == ${FULL_BACKUP_DAY} ]
 	then
 		rm ${TIMESTAMP}
 		tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
