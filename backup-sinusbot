@@ -35,19 +35,19 @@ then
 	if [ $TODAY == 1 ]
 	then
 		rm ${TIMESTAMP}
-		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-ful-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
+		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
 	else
-		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-inc-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
+		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
 	fi
 else
 	if [ $TODAY == 1 ]
 	then
 		rm ${TIMESTAMP}
 		cd $DIR_ROOT
-		tar -cjpf $DIR_BACKUP/sinusbot-ful-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
+		tar -cjpf $DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
 	else
 		cd $DIR_ROOT
-		tar -cjpf $DIR_BACKUP/sinusbot-inc-$DATE.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
+		tar -cjpf $DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
 	fi
 fi
 
