@@ -33,7 +33,7 @@ TIMESTAMP="${DIR_ROOT}/${BASENAME}-timestamp.dat"
 if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
 if [ `whoami` = root ]
 then
-	if [ $TODAY == ${FULL_BACKUP_DAY} ]
+	if [ $TODAY == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
 		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
@@ -41,7 +41,7 @@ then
 		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
 	fi
 else
-	if [ $TODAY == ${FULL_BACKUP_DAY} ]
+	if [ $TODAY == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
 		cd $DIR_ROOT
