@@ -14,7 +14,7 @@ fi
 DIRS=$(awk -F\" '/^\[Cloud\]/{f=1} f==1&&/^DIRS/{print $2;exit}' "${CONFIG}")
 BACKUP_DIR=$(awk '/^\[Cloud\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONFIG}")
 LOCAL_BACKUPS_NUM=$(awk '/^\[Cloud\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
-FULL_BACKUP_DAY=$(awk -F\" '/^\[Cloud\]/{f=1} f==1&&/^FULL_BACKUP_DAY=SOURCE/{print $2;exit}' "${CONFIG}")
+FULL_BACKUP_DAY=$(awk -F\" '/^\[Cloud\]/{f=1} f==1&&/^FULL_BACKUP_DAY=SOURCE/{print $3;exit}' "${CONFIG}")
 
 NUM=$(echo ${DIRS} | awk '{print NF}')
 NUM=$((NUM-1))
