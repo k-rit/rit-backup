@@ -38,7 +38,7 @@ do
 	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi
 	
 	if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
-	if [ $TODAY == "${FULL_BACKUP_DAY}" ]
+	if [ $TODAY == ${FULL_BACKUP_DAY} ]
 	then
 		rm ${TIMESTAMP}
 		tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE-ful.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
