@@ -16,7 +16,7 @@ USER=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^USER/{print $3;exit}' "${CONFIG}")
 DIR_ROOT=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_ROOT/{print $3;exit}' "${CONFIG}")
 DIR_BACKUP=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
 LOCAL_BACKUPS_NUM=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
-FULL_BACKUP_DAY=$(awk -F\" '/^\[Sinusbot\]/{f=1} f==1&&/^FULL_BACKUP_DAY=SOURCE/{print $3;exit}' "${CONFIG}")
+FULL_BACKUP_DAY=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^FULL_BACKUP_DAY/{print $3;exit}' "${CONFIG}")
 
 #systemctl stop sinusbot.service
 #${BASEDIR}/backup-prog sinusbot stop

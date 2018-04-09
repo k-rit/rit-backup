@@ -31,7 +31,7 @@ BACKUP_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONF
 SQL_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^SQL_DIR/{print $3;exit}' "${CONFIG}")
 SOURCE=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^SOURCE/{print $2;exit}' "${CONFIG}")
 SOURCE="$SQL_DIR $SOURCE"
-FULL_BACKUP_DAY=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^FULL_BACKUP_DAY=SOURCE/{print $3;exit}' "${CONFIG}")
+FULL_BACKUP_DAY=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^FULL_BACKUP_DAY/{print $3;exit}' "${CONFIG}")
 
 SINUSBOT_BACKUPDIR=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
 LOCAL_BACKUPS_NUM=$(awk '/^\[System\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
