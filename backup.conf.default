@@ -2,11 +2,12 @@
 # Dies ist nur ein Beispiel - bitte anpassen.
 # Man muss schreibberechtigt im entsprechenden Verzeichnis sein.
 # Wichtig sind die leerzeichen vor und hinter dem "="
-# Passwoerter sind in base64 kodiert!!
-# Codieren mit --> echo `echo password | base64`
+
 
 [System]
 MYSQL_BEN = user
+# Passwoerter sind in base64 kodiert!!
+# Codieren mit --> echo `echo password | base64`
 MYSQL_PW = password
 BACKUP_DIR = /root/backup
 SQL_DIR = /var/lib/mysql
@@ -44,10 +45,13 @@ ON = no
 IN_DIR = /data/backups
 USER = user
 GROUP = users
+# num = download servers
 NUM = 3
 LOCAL_BACKUPS_NUM = 7
 
 IP1 = 127.0.0.1
+# Passwoerter sind in base64 kodiert!!
+# Codieren mit --> echo `echo password | base64`
 PW1 = ChangeMe
 PORT1 = 22
 NAME1 = MyServer1
@@ -56,11 +60,11 @@ EX_DIR1 = /root/backup
 IP2 = 127.0.0.1
 PW2 = ChangeMe
 PORT2 = 22
-NAME2 = MyServer1
+NAME2 = MyServer2
 EX_DIR2 = /root/backup
 
 IP3 = 127.0.0.1
 PW3 = ChangeMe
 PORT3 = 22
-NAME3 = MyServer1
+NAME3 = MyServer3
 EX_DIR3 = /root/backup

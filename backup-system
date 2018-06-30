@@ -85,9 +85,9 @@ else
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
 	else
-		tar -cjpPf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
 	fi
 fi
 
