@@ -1,34 +1,40 @@
 #!/bin/bash
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starte $0"
+echo "[${DATE_H}] - Starting $0"
 
 #Config
-BASEDIR=$(dirname "$0")
-CONFIG="${BASEDIR}/backup.conf"
-if [ ! -f ${CONFIG} ]
-then
-	echo "Config-Datei nicht gefunden!"
-	exit
-fi
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
 
-IN_DIR=$(awk '/^\[Download\]/{f=1} f==1&&/^IN_DIR/{print $3;exit}' "${CONFIG}")
-USER=$(awk '/^\[Download\]/{f=1} f==1&&/^USER/{print $3;exit}' "${CONFIG}")
-GROUP=$(awk '/^\[Download\]/{f=1} f==1&&/^GROUP/{print $3;exit}' "${CONFIG}")
-NUM=$(awk '/^\[Download\]/{f=1} f==1&&/^NUM/{print $3;exit}' "${CONFIG}")
-LOCAL_BACKUPS_NUM=$(awk '/^\[Download\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
+source ${BASEDIR}/backup-loadconfig
+
+IN_DIR=${Download[IN_DIR]}
+USER=${Download[USER]}
+GROUP=${Download[GROUP]}
+NUM=${Download[NUM]}
+LOCAL_BACKUPS_NUM=${Download[LOCAL_BACKUPS_NUM]}
 
 for i in $(eval echo "{1..$NUM}")
 do
-	EX_DIR=$(awk '/^\[Download\]/{f=1} f==1&&/^EX_DIR'${i}'/{print $3;exit}' "${CONFIG}")
-	PW=$(awk '/^\[Download\]/{f=1} f==1&&/^PW'${i}'/{print $3;exit}' "${CONFIG}" | base64 --decode)
-	IP=$(awk '/^\[Download\]/{f=1} f==1&&/^IP'${i}'/{print $3;exit}' "${CONFIG}")
-	PORT=$(awk '/^\[Download\]/{f=1} f==1&&/^PORT'${i}'/{print $3;exit}' "${CONFIG}")
-	NAME=$(awk '/^\[Download\]/{f=1} f==1&&/^NAME'${i}'/{print $3;exit}' "${CONFIG}")
+	eval varAlias=(\${"Server"$i[@]})
+	EX_DIR="${varAlias[1]}"
+	PW="${varAlias[2]}"
+	PW=`echo $PW | base64 --decode`
+	IP=${varAlias[4]}
+	PORT=${varAlias[3]}
+	NAME=${varAlias[0]}
+
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+	echo "[${DATE_H}] - Starte Download von $NAME"
+
 	sshpass -p $PW rsync --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
 	#--progress --stats
 	${BASEDIR}/backup-remove ${IN_DIR}/${NAME} $LOCAL_BACKUPS_NUM
 done
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - download finished"
 
 exit
 

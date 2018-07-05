@@ -1,0 +1,53 @@
+#!/bin/bash
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starting $0"
+#Config
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
+CONFIG="${BASEDIR}/backup.conf"
+DEFAULT_CONFIG="${BASEDIR}/backup.conf.default"
+
+if [ ! -f "${CONFIG}" ]
+then
+	echo "Config file not found!"
+fi
+
+while read line; do 
+	if [[ ! $line =~ ^\ *# && -n $line ]]; then
+		line="${line%%\#*}" # Del in line right comments
+
+		if [[ $line =~ ^"["(.+)"]"$ ]]; then
+			arrname=${BASH_REMATCH[1]}
+			declare -A $arrname
+		elif [[ $line =~ ^([_[:alpha:]][_[:alnum:]]*)" = "(.*) ]]; then
+			declare ${arrname}[${BASH_REMATCH[1]}]="${BASH_REMATCH[2]}"
+		elif [[ $line =~ ^([_[:alpha:]][_[:alnum:]]*)"="(.*) ]]; then
+			declare ${arrname}[${BASH_REMATCH[1]}]="${BASH_REMATCH[2]}"
+		fi
+	fi
+done < $DEFAULT_CONFIG
+
+while read line; do 
+	if [[ ! $line =~ ^\ *# && -n $line ]]; then
+		line="${line%%\#*}" # Del in line right comments
+
+		if [[ $line =~ ^"["(.+)"]"$ ]]; then
+			arrname=${BASH_REMATCH[1]}
+			declare -A $arrname
+		elif [[ $line =~ ^([_[:alpha:]][_[:alnum:]]*)" = "(.*) ]]; then
+			declare ${arrname}[${BASH_REMATCH[1]}]="${BASH_REMATCH[2]}"
+		elif [[ $line =~ ^([_[:alpha:]][_[:alnum:]]*)"="(.*) ]]; then
+			declare ${arrname}[${BASH_REMATCH[1]}]="${BASH_REMATCH[2]}"
+		fi
+	fi
+done < $CONFIG
+
+#System[SOURCE]=${System[SOURCE]//[\"]}
+
+#for i in "${!Copy[@]}"; do echo "Copy: $i => ${Copy[$i]}"; done
+#for i in "${!System[@]}"; do echo "System: $i => ${System[$i]}"; done
+#for i in "${!Cloud[@]}"; do echo "Cloud: $i => ${Cloud[$i]}"; done
+
+return $System $Sinusbot $Cloud $Copy $Download
+

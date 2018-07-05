@@ -1,20 +1,18 @@
 #!/bin/bash
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starte $0"
+echo "[${DATE_H}] - Starting $0"
 #Config
-BASEDIR=$(dirname "$0")
-CONFIG="${BASEDIR}/backup.conf"
-if [ ! -f ${CONFIG} ]
-then
-	echo "Config-Datei nicht gefunden!"
-	exit
-fi
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
 
-DIRS=$(awk -F\" '/^\[Cloud\]/{f=1} f==1&&/^DIRS/{print $2;exit}' "${CONFIG}")
-BACKUP_DIR=$(awk '/^\[Cloud\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONFIG}")
-LOCAL_BACKUPS_NUM=$(awk '/^\[Cloud\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
-FULL_BACKUP_DAY=$(awk '/^\[Cloud\]/{f=1} f==1&&/^FULL_BACKUP_DAY/{print $3;exit}' "${CONFIG}")
+source ${BASEDIR}/backup-loadconfig
+Cloud[DIRS]=${Cloud[DIRS]//[\"]}
+
+DIRS="${Cloud[DIRS]}"
+BACKUP_DIR=${Cloud[BACKUP_DIR]}
+LOCAL_BACKUPS_NUM=${Cloud[LOCAL_BACKUPS_NUM]}
+FULL_BACKUP_DAY=${Cloud[FULL_BACKUP_DAY]}
 
 NUM=$(echo ${DIRS} | awk '{print NF}')
 NUM=$((NUM-1))

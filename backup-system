@@ -1,6 +1,6 @@
 #!/bin/bash
 #   -----------------------------------------------------------------------------------------
-#   Copyright (c) 2015 rilling.IT
+#   Copyright (c) 2018 rilling.IT
 #   -----------------------------------------------------------------------------------------
 #   Released under the GNU General Public License 
 #   -----------------------------------------------------------------------------------------
@@ -13,28 +13,26 @@ else
 fi
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starte $0"
+echo "[${DATE_H}] - Starting $0"
 #Config
-BASEDIR=$(dirname "$0")
-echo "${BASEDIR}"
-CONFIG="${BASEDIR}/backup.conf"
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
 
-if [ ! -f "${CONFIG}" ]
-then
-	echo "Config-Datei nicht gefunden!"
-	exit
-fi
+source ${BASEDIR}/backup-loadconfig
 
-MYSQL_BEN=$(awk '/^\[System\]/{f=1} f==1&&/^MYSQL_BEN/{print $3;exit}' "${CONFIG}")
-MYSQL_PW=$(awk '/^\[System\]/{f=1} f==1&&/^MYSQL_PW/{print $3;exit}' "${CONFIG}" | base64 --decode)
-BACKUP_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^BACKUP_DIR/{print $3;exit}' "${CONFIG}")
-SQL_DIR=$(awk '/^\[System\]/{f=1} f==1&&/^SQL_DIR/{print $3;exit}' "${CONFIG}")
-SOURCE=$(awk -F\" '/^\[System\]/{f=1} f==1&&/^SOURCE/{print $2;exit}' "${CONFIG}")
+System[SOURCE]=${System[SOURCE]//[\"]}
+
+MYSQL_BEN=${System[MYSQL_BEN]}
+MYSQL_PW=`echo ${System[MYSQL_PW]} | base64 --decode`
+BACKUP_DIR=${System[BACKUP_DIR]}
+SQL_DIR=${System[SQL_DIR]}
+SOURCE=${System[SOURCE]}
 SOURCE="$SQL_DIR $SOURCE"
-FULL_BACKUP_DAY=$(awk '/^\[System\]/{f=1} f==1&&/^FULL_BACKUP_DAY/{print $3;exit}' "${CONFIG}")
+FULL_BACKUP_DAY=${System[FULL_BACKUP_DAY]}
+EXCLUDE_DIRS=${System[EXCLUDE_DIR]}
 
-SINUSBOT_BACKUPDIR=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^DIR_BACKUP/{print $3;exit}' "${CONFIG}")
-LOCAL_BACKUPS_NUM=$(awk '/^\[System\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
+SINUSBOT_BACKUPDIR=${Sinusbot[DIR_BACKUP]}
+LOCAL_BACKUPS_NUM=${System[LOCAL_BACKUPS_NUM]}
 
 #Datum generieren
 DATE=$(date +%Y-%m-%d-%H%M%S)
@@ -50,13 +48,13 @@ fi
 
 #Alte MYSQL Sicherung Löschen
 rm $SQL_DIR/backup-all-databases-*.sql
-echo "[${DATE_H}] - Das alte MYSQL Backup wurde entfernt!"
+echo "[${DATE_H}] - The old MYSQL backup has been removed!"
 
 #SQL Sichern
 mysqldump -E -u ${MYSQL_BEN} -p${MYSQL_PW} --all-databases > $SQL_DIR/backup-all-databases-$DATE.sql
 # 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - MYSQL Backup wurde erstellt"
+echo "[${DATE_H}] - MYSQL Backup was created"
 sleep 2s
 
 #${BASEDIR}/backup-prog apache2 stop
@@ -64,8 +62,9 @@ sleep 2s
 #systemctl stop apache2
 #systemctl stop mysql
 
-if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR=""; fi
-if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR2="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR2=""; fi
+if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR="--exclude=$EXCLUDE_DIRS"; else EXCLUDE_DIR=""; fi
+if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR=""; fi
+if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR2=""; fi
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
@@ -76,18 +75,21 @@ if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
 TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
 # Temp end
 
-echo "[${DATE_H}] - Backup-${ART} gestartet..." 
+echo "[${DATE_H}] - Backup-${ART} started..." 
 if [ ${ART} == "Full" ]
 then
-	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 /
+	echo "then"
+	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 /
 else
 	if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
+		echo "ful"
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $SOURCE
 	else
-		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $SOURCE
+		echo "inc"
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $SOURCE
 	fi
 fi
 
@@ -98,10 +100,10 @@ DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 #systemctl start mysql
 #systemctl start apache2
 
-echo "[${DATE_H}] - Backup-${ART} erfolgreich abgeschlossen :)"
+echo "[${DATE_H}] - Backup-${ART} successfully completed :)"
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - entferne alte Backups"
+echo "[${DATE_H}] - remove old backups"
 
 ${BASEDIR}/backup-remove $BACKUP_DIR $LOCAL_BACKUPS_NUM
 

@@ -3,19 +3,22 @@ DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 echo "[${DATE_H}] - Starte $0"
 
 #Config
-BASEDIR=$(dirname "$0")
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
 CONFIG="${BASEDIR}/backup.conf"
 if [ ! -f ${CONFIG} ]
 then
-	echo "Config-Datei nicht gefunden!"
+	echo "Config file not found!"
 	exit
 fi
 
-SYS_ON=$(awk '/^\[System\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
-SIN_ON=$(awk '/^\[Sinusbot\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
-CLO_ON=$(awk '/^\[Cloud\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
-DOW_ON=$(awk '/^\[Download\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
-CPY_ON=$(awk '/^\[Copy\]/{f=1} f==1&&/^ON/{print $3;exit}' "${CONFIG}")
+source ${BASEDIR}/backup-loadconfig
+
+SYS_ON=${System[ON]}
+SIN_ON=${Sinusbot[ON]}
+CLO_ON=${Cloud[ON]}
+DOW_ON=${Download[ON]}
+CPY_ON=${Copy[ON]}
 
 
 if [ $SYS_ON == "yes" ]; then ${BASEDIR}/backup-system ; fi

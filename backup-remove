@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starte $0"
+
 if [ ! $1 ] ; then exit ; else DIR_BACKUP=$1; fi
 if [ ! $2 ] ; then let MAXCOUNT=7; else let MAXCOUNT=$2; fi
 
@@ -26,3 +29,8 @@ then
 else
 	echo "Nothing to do."
 fi
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - remove finished"
+
+exit

@@ -1,26 +1,46 @@
 #!/bin/bash
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starte $0"
+echo "[${DATE_H}] - Starting $0"
+
 #Config
-BASEDIR=$(dirname "$0")
-CONFIG="${BASEDIR}/backup.conf"
-if [ ! -f ${CONFIG} ]
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
+
+source ${BASEDIR}/backup-loadconfig
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starte $0"
+
+#Config
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
+
+DIR_FROM=${Copy[DIR_FROM]}
+USER=${Download[USER]}
+GROUP=${Download[GROUP]}
+DIR_TO=${Copy[DIR_TO]}
+LOCAL_BACKUPS_NUM=${Copy[LOCAL_BACKUPS_NUM]}
+TYPE=${Copy[TYPE]}
+
+echo $TYPE
+
+if [ "$TYPE" == "dir" ] || [ "$TYPE" == "d" ]
 then
-	echo "Config-Datei nicht gefunden!"
-	exit
+	cd $DIR_FROM
+	for DIR in *
+	do
+		rsync -aqu --chown=$USER:$GROUP ${DIR_FROM}/${DIR}/* ${DIR_TO}/${DIR}/
+		${BASEDIR}/backup-remove ${DIR_TO}/${DIR} $LOCAL_BACKUPS_NUM
+	done
+elif [ "$TYPE" == "file" ] || [ "$TYPE" == "f" ]
+then
+	cd $DIR_FROM
+	rsync -aqu --chown=$USER:$GROUP ${DIR_FROM}/* ${DIR_TO}/
+	${BASEDIR}/backup-remove ${DIR_TO}/ $LOCAL_BACKUPS_NUM
 fi
 
-DIR_FROM=$(awk '/^\[Copy\]/{f=1} f==1&&/^DIR_FROM/{print $3;exit}' "${CONFIG}")
-USER=$(awk '/^\[Download\]/{f=1} f==1&&/^USER/{print $3;exit}' "${CONFIG}")
-GROUP=$(awk '/^\[Download\]/{f=1} f==1&&/^GROUP/{print $3;exit}' "${CONFIG}")
-DIR_TO=$(awk '/^\[Copy\]/{f=1} f==1&&/^DIR_TO/{print $3;exit}' "${CONFIG}")
-LOCAL_BACKUPS_NUM=$(awk '/^\[Copy\]/{f=1} f==1&&/^LOCAL_BACKUPS_NUM/{print $3;exit}' "${CONFIG}")
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - copy completed"
 
-cd $DIR_FROM
-for DIR in *
-do
-	rsync -aqu --chown=$USER:$GROUP ${DIR_FROM}/${DIR}/* ${DIR_TO}/${DIR}/
-	${BASEDIR}/backup-remove ${DIR_TO}/${DIR} $LOCAL_BACKUPS_NUM
-done
 exit
