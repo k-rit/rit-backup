@@ -28,7 +28,7 @@ do
 	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 	echo "[${DATE_H}] - Starte Download von $NAME"
 
-	sshpass -p $PW rsync --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
+	sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
 	#--progress --stats
 	${BASEDIR}/backup-remove ${IN_DIR}/${NAME} $LOCAL_BACKUPS_NUM
 done

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
-
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
@@ -10,11 +7,7 @@ BASEDIR=$(dirname "$BASEDIR")
 source ${BASEDIR}/backup-loadconfig
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starte $0"
-
-#Config
-BASEDIR=$(readlink -f "$0")
-BASEDIR=$(dirname "$BASEDIR")
+echo "[${DATE_H}] - Starting $0"
 
 DIR_FROM=${Copy[DIR_FROM]}
 USER=${Download[USER]}
@@ -22,8 +15,6 @@ GROUP=${Download[GROUP]}
 DIR_TO=${Copy[DIR_TO]}
 LOCAL_BACKUPS_NUM=${Copy[LOCAL_BACKUPS_NUM]}
 TYPE=${Copy[TYPE]}
-
-echo $TYPE
 
 if [ "$TYPE" == "dir" ] || [ "$TYPE" == "d" ]
 then
