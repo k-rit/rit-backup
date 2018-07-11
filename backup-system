@@ -63,8 +63,8 @@ sleep 2s
 #systemctl stop mysql
 
 if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR="--exclude=$EXCLUDE_DIRS"; else EXCLUDE_DIR=""; fi
-if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR=""; fi
-if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR2=""; fi
+if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR2=""; fi
+if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR3=""; fi
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
