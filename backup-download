@@ -1,13 +1,15 @@
 #!/bin/bash
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
-
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
 
 source ${BASEDIR}/backup-loadconfig
+
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starting $0"
+
 
 IN_DIR=${Download[IN_DIR]}
 USER=${Download[USER]}

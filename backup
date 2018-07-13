@@ -1,6 +1,4 @@
 #!/bin/bash
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
 
 #Config
 BASEDIR=$(readlink -f "$0")
@@ -13,6 +11,9 @@ then
 fi
 
 source ${BASEDIR}/backup-loadconfig
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starting $0"
 
 SYS_ON=${System[ON]}
 SIN_ON=${Sinusbot[ON]}
@@ -27,3 +28,6 @@ if [ $CLO_ON == "yes" ]; then ${BASEDIR}/backup-cloud ; fi
 if [ $DOW_ON == "yes" ]; then ${BASEDIR}/backup-download ; fi
 if [ $CPY_ON == "yes" ]; then ${BASEDIR}/backup-copy ; fi
 
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - EXIT $0"
+#Done!

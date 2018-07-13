@@ -1,13 +1,16 @@
 #!/bin/bash
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
 
 source ${BASEDIR}/backup-loadconfig
 Cloud[DIRS]=${Cloud[DIRS]//[\"]}
+
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starting $0"
+
 
 DIRS="${Cloud[DIRS]}"
 BACKUP_DIR=${Cloud[BACKUP_DIR]}
@@ -24,14 +27,12 @@ BASENAME="$(basename $0)"
 if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
 # Temp end
 
-DATE=$(date +%Y-%m-%d-%H%M%S)
-
 for i in $(eval echo "{0..$NUM}")
 do
 	if [ ! -d ${DIR_ROOT[$i]} ]; then exit; fi
 	echo "Doing Backup of '${DIR_ROOT[$i]}'"
 	NAME=$(basename ${DIR_ROOT[$i]})
-	DATE=$(date +%Y-%m-%d-%H%M%S)
+	DATE=$(date +%Y-%m-%d--%H%M%S)
 	TIMESTAMP="${BASEDIR2}${BASENAME}-$NAME-timestamp.dat"
 	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi
 	

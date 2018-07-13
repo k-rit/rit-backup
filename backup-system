@@ -12,8 +12,6 @@ else
 	ART="System"
 fi
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
@@ -21,6 +19,11 @@ BASEDIR=$(dirname "$BASEDIR")
 source ${BASEDIR}/backup-loadconfig
 
 System[SOURCE]=${System[SOURCE]//[\"]}
+
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starting $0"
+
 
 MYSQL_BEN=${System[MYSQL_BEN]}
 MYSQL_PW=`echo ${System[MYSQL_PW]} | base64 --decode`
@@ -35,7 +38,7 @@ SINUSBOT_BACKUPDIR=${Sinusbot[DIR_BACKUP]}
 LOCAL_BACKUPS_NUM=${System[LOCAL_BACKUPS_NUM]}
 
 #Datum generieren
-DATE=$(date +%Y-%m-%d-%H%M%S)
+DATE=$(date +%Y-%m-%d--%H%M%S)
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
 #Hostname
@@ -103,7 +106,4 @@ DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 echo "[${DATE_H}] - remove old backups"
 
 ${BASEDIR}/backup-remove $BACKUP_DIR $LOCAL_BACKUPS_NUM
-
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Done!"
 

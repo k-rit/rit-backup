@@ -1,12 +1,15 @@
 #!/bin/bash
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
 
 source ${BASEDIR}/backup-loadconfig
+
+
+DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+echo "[${DATE_H}] - Starting $0"
+
 
 USER=${Sinusbot[USER]}
 DIR_ROOT=${Sinusbot[DIR_ROOT]}
@@ -17,7 +20,7 @@ FULL_BACKUP_DAY=${Sinusbot[FULL_BACKUP_DAY]}
 #systemctl stop sinusbot.service
 #${BASEDIR}/backup-prog sinusbot stop
 
-DATE=$(date +%Y-%m-%d-%H%M%S)
+DATE=$(date +%Y-%m-%d--%H%M%S)
 
 # Temp start
 TODAY=`date +%u`
