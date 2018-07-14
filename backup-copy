@@ -28,7 +28,7 @@ elif [ "$TYPE" == "file" ] || [ "$TYPE" == "f" ]
 then
 	cd $DIR_FROM
 	rsync -aqu --chown=$USER:$GROUP ${DIR_FROM}/* ${DIR_TO}/
-	${BASEDIR}/backup-remove ${DIR_TO}/ $LOCAL_BACKUPS_NUM
+	${BASEDIR}/backup-remove ${DIR_TO} $LOCAL_BACKUPS_NUM
 fi
 
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
