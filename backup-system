@@ -33,6 +33,7 @@ SOURCE=${System[SOURCE]}
 SOURCE="$SQL_DIR $SOURCE"
 FULL_BACKUP_DAY=${System[FULL_BACKUP_DAY]}
 EXCLUDE_DIRS=${System[EXCLUDE_DIR]}
+EXCLUDE_DIRS2=${System[EXCLUDE_DIR2]}
 
 SINUSBOT_BACKUPDIR=${Sinusbot[DIR_BACKUP]}
 LOCAL_BACKUPS_NUM=${System[LOCAL_BACKUPS_NUM]}
@@ -59,13 +60,13 @@ rm $SQL_DIR/backup/*
 
 echo "[${DATE_H}] - The old MYSQL backup has been removed!"
 
-#SQL Sichern
-mysqldump -E -u ${MYSQL_BEN} -p${MYSQL_PW} --all-databases > ${SQL_DIR}/backup/backup-all-databases-$DATE.sql
- 
+export MYSQL_PWD=${MYSQL_PW}
+
 MYSQL=/usr/bin/mysql
 MYSQLDUMP=/usr/bin/mysqldump
 
-export MYSQL_PWD=${MYSQL_PW}
+#SQL Sichern
+mysqldump -E -u ${MYSQL_BEN} --all-databases > ${SQL_DIR}/backup/backup-all-databases-$DATE.sql
 
 databases=`$MYSQL --user=${MYSQL_BEN} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema)"`
  
@@ -84,6 +85,7 @@ sleep 2s
 #systemctl stop mysql
 
 if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR="--exclude=$EXCLUDE_DIRS"; else EXCLUDE_DIR=""; fi
+if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE_DIR4="--exclude=$EXCLUDE_DIRS2"; else EXCLUDE_DIR4=""; fi
 if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR2=""; fi
 if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR3=""; fi
 
@@ -99,15 +101,15 @@ TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
 echo "[${DATE_H}] - Backup-${ART} started..." 
 if [ ${ART} == "Full" ]
 then
-	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 /
+	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 /
 else
 	if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $SOURCE
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 $SOURCE
 	else
-		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $SOURCE
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 $SOURCE
 	fi
 fi
 

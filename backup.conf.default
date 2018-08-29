@@ -16,6 +16,7 @@ LOCAL_BACKUPS_NUM = 7
 # Mo=1;Di=2;Mi=3;Do=4;Fr=5;Sa=6;So=7;
 FULL_BACKUP_DAY = 1
 EXCLUDE_DIR = /var/log/
+EXCLUDE_DIR2 = /var/log/
 
 [Sinusbot]
 USER = sinusbot
