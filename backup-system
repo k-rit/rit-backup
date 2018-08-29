@@ -64,11 +64,13 @@ mysqldump -E -u ${MYSQL_BEN} -p${MYSQL_PW} --all-databases > ${SQL_DIR}/backup/b
  
 MYSQL=/usr/bin/mysql
 MYSQLDUMP=/usr/bin/mysqldump
- 
-databases=`$MYSQL --user=${MYSQL_BEN} -p${MYSQL_PW} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema)"`
+
+export MYSQL_PWD=${MYSQL_PW}
+
+databases=`$MYSQL --user=${MYSQL_BEN} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema)"`
  
 for db in $databases; do
-	$MYSQLDUMP --force --opt --user=${MYSQL_BEN} -p${MYSQL_PW} --databases $db | gzip > "${SQL_DIR}/backup/$db-$DATE.sql.gz"
+	$MYSQLDUMP --force --opt --user=${MYSQL_BEN} --databases $db | gzip > "${SQL_DIR}/backup/$db-$DATE.sql.gz"
 done
 
 # 
