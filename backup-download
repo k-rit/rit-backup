@@ -20,12 +20,15 @@ LOCAL_BACKUPS_NUM=${Download[LOCAL_BACKUPS_NUM]}
 for i in $(eval echo "{1..$NUM}")
 do
 	eval varAlias=(\${"Server"$i[@]})
-	EX_DIR="${varAlias[1]}"
-	PW="${varAlias[2]}"
+	EX_DIR="${varAlias[0]}"
+	PW="${varAlias[1]}"
 	PW=`echo $PW | base64 --decode`
-	IP=${varAlias[4]}
-	PORT=${varAlias[3]}
-	NAME=${varAlias[0]}
+	PORT=${varAlias[2]}
+	IP=${varAlias[3]}
+	NAME=${varAlias[4]}
+
+	#echo "$varAlias"
+	#echo "$EX_DIR | $PW | $IP | $PORT | $NAME"
 
 	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 	echo "[${DATE_H}] - Starte Download von $NAME"
