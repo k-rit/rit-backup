@@ -17,13 +17,15 @@ BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
 
 source ${BASEDIR}/backup-loadconfig
+source ${BASEDIR}/backup-loadfunc
 
-System[SOURCE]=${System[SOURCE]//[\"]}
+#System[SOURCE]=${System[SOURCE]//[\"]}
 
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
+#DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+#echo "[${DATE_H}] - Starting $0"
 
+fstart $0
 
 MYSQL_BEN=${System[MYSQL_BEN]}
 MYSQL_PW=`echo ${System[MYSQL_PW]} | base64 --decode`
@@ -66,23 +68,29 @@ MYSQL=/usr/bin/mysql
 MYSQLDUMP=/usr/bin/mysqldump
 
 #SQL Sichern
-mysqldump -E -u ${MYSQL_BEN} --all-databases > ${SQL_DIR}/backup/backup-all-databases-$DATE.sql
+$MYSQLDUMP -E -u ${MYSQL_BEN} --all-databases > ${SQL_DIR}/backup/backup-all-databases-$DATE.sql
+ftest $? "The full MYSQL-Backup has been successfully created" "Error while creating full MYSQL-Backup"
 
 databases=`$MYSQL --user=${MYSQL_BEN} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema)"`
  
 for db in $databases; do
 	$MYSQLDUMP --force --opt --user=${MYSQL_BEN} --databases $db | gzip > "${SQL_DIR}/backup/$db-$DATE.sql.gz"
 done
+ftest $? "The single MYSQL-Backup has been successfully created" "Error while creating single MYSQL-Backup"
 
+#
+#
+###########################
+# TODO: update the next code
+#	end remove the error 
+#	"tar: Removing leading `/' from member names"
+#	-C / var/www
+###########################
 # 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - MYSQL Backup was created"
-sleep 2s
 
-#${BASEDIR}/backup-prog apache2 stop
-#${BASEDIR}/backup-prog mysql stop
-#systemctl stop apache2
-#systemctl stop mysql
+#DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+#echo "[${DATE_H}] - MYSQL Backup was created"
+#sleep 2s
 
 if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR="--exclude=$EXCLUDE_DIRS"; else EXCLUDE_DIR=""; fi
 if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE_DIR4="--exclude=$EXCLUDE_DIRS2"; else EXCLUDE_DIR4=""; fi
@@ -112,18 +120,12 @@ else
 		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 $SOURCE
 	fi
 fi
+#
+###########################
+#
+ftest $? "Backup-${ART} successfully completed :)" "Backup-${ART} exited with errors"
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 
-#${BASEDIR}/backup-prog mysql start
-#${BASEDIR}/backup-prog apache2 start
-#systemctl start mysql
-#systemctl start apache2
-
-echo "[${DATE_H}] - Backup-${ART} successfully completed :)"
-
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - remove old backups"
-
+fstatus "remove old backups"
 ${BASEDIR}/backup-remove $BACKUP_DIR $LOCAL_BACKUPS_NUM
 
