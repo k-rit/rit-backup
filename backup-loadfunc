@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# to echo a error to strerr
+# use: eerr "the error"
+function eerr() { printf "%s\n" "$*" >&2; }
+
+# to test if a programm send an error
+# use: ftest $? "Done" "Error!"
+function ftest() {
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+	if [ $1 -eq 0 ]
+	then
+		if [ "$2" == "" ]
+		then
+			echo "[${DATE_H}] - DONE"
+		else
+			echo "[${DATE_H}] - $2"
+		fi
+	else
+		if [ "$3" == "" ]
+		then
+			eerr "[${DATE_H}] - ERROR!"
+		else
+			eerr "[${DATE_H}] - $3"
+		fi
+	fi
+}
+
+# to echo a start with timestamp
+# use: fstart
+# or: fstart "Progamm"
+function fstart() {
+	if [ "$1" == "" ]
+	then
+		VARI=$0
+	else
+		VARI=$1
+	fi
+
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+	echo "[${DATE_H}] - Starting $VARI"
+}
+
+# to echo a event/status with timestamp
+# use: fstatus "event"
+function fstatus() {
+	if [ "$1" == "" ]
+	then
+		exit 1
+	fi
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+	echo "[${DATE_H}] - $1"
+}
+
+# to echo a exit with timestamp
+# use: fdone
+# or: fdone "Progamm"
+function fdone() {
+	if [ "$1" == "" ]
+	then
+		VARI=$0
+	else
+		VARI=$1
+	fi
+
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+	echo "[${DATE_H}] - Exit $VARI"
+}
+
+
