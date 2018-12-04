@@ -5,20 +5,15 @@ BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
 
 source ${BASEDIR}/backup-loadconfig
+source ${BASEDIR}/backup-loadfunc
 
-
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
-
+fstart $0
 
 USER=${Sinusbot[USER]}
 DIR_ROOT=${Sinusbot[DIR_ROOT]}
 DIR_BACKUP=${Sinusbot[DIR_BACKUP]}
 LOCAL_BACKUPS_NUM=${Sinusbot[LOCAL_BACKUPS_NUM]}
 FULL_BACKUP_DAY=${Sinusbot[FULL_BACKUP_DAY]}
-
-#systemctl stop sinusbot.service
-#${BASEDIR}/backup-prog sinusbot stop
 
 DATE=$(date +%Y-%m-%d--%H%M%S)
 
@@ -51,11 +46,7 @@ else
 	fi
 fi
 
-#systemctl start sinusbot.service
-#${BASEDIR}/backup-prog sinusbot start
-
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - $0 finished"
+fdone $0
 
 ${BASEDIR}/backup-remove $DIR_BACKUP $LOCAL_BACKUPS_NUM
 

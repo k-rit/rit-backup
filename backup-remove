@@ -1,7 +1,8 @@
 #!/bin/bash
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
+source ${BASEDIR}/backup-loadfunc
+
+fstart $0
 
 if [ ! $1 ] ; then exit ; else DIR_BACKUP=$1; fi
 if [ ! $2 ] ; then let MAXCOUNT=7; else let MAXCOUNT=$2; fi
@@ -10,7 +11,8 @@ let COUNTER=0
 
 for BACKUPFILE in $DIR_BACKUP/*; do
 	let COUNTER=$COUNTER+1
-	echo $BACKUPFILE
+	#echo $BACKUPFILE
+	du -h $BACKUPFILE
 done
 echo "Backup count:" $COUNTER
 if test $COUNTER -gt $MAXCOUNT;
@@ -23,14 +25,16 @@ then
 		if test $NEWCOUNTER -le $TEMP;
 		then
 			rm $DELETEFILE
-			echo "Deleting file" $DELETEFILE
+			#echo "Deleting file" $DELETEFILE
+			eerr "Deleting file $DELETEFILE"
 		fi
 	done
 else
 	echo "Nothing to do."
 fi
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - remove finished"
+#echo "[${DATE_H}] - remove finished"
+fstatus "remove finished"
+
 
 exit

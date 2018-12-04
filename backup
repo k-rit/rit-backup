@@ -3,17 +3,11 @@
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
-CONFIG="${BASEDIR}/backup.conf"
-if [ ! -f ${CONFIG} ]
-then
-	echo "Config file not found!"
-	exit
-fi
 
 source ${BASEDIR}/backup-loadconfig
+source ${BASEDIR}/backup-loadfunc
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
+fstart $0
 
 SYS_ON=${System[ON]}
 SIN_ON=${Sinusbot[ON]}
@@ -21,13 +15,10 @@ CLO_ON=${Cloud[ON]}
 DOW_ON=${Download[ON]}
 CPY_ON=${Copy[ON]}
 
-
 if [ $SYS_ON == "yes" ]; then ${BASEDIR}/backup-system ; fi
 if [ $SIN_ON == "yes" ]; then ${BASEDIR}/backup-sinusbot ; fi
 if [ $CLO_ON == "yes" ]; then ${BASEDIR}/backup-cloud ; fi
 if [ $DOW_ON == "yes" ]; then ${BASEDIR}/backup-download ; fi
 if [ $CPY_ON == "yes" ]; then ${BASEDIR}/backup-copy ; fi
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - EXIT $0"
-#Done!
+fdone $0

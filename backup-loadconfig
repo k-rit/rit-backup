@@ -1,7 +1,8 @@
 #!/bin/bash
 
+source ${BASEDIR}/backup-loadfunc
+
 DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-#echo "[${DATE_H}] - Starting $0"
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
@@ -10,7 +11,7 @@ DEFAULT_CONFIG="${BASEDIR}/backup.conf.default"
 
 if [ ! -f "${CONFIG}" ]
 then
-	echo "Config file not found!"
+	eerr "[${DATE_H}] - Config file not found!"
 fi
 
 while read line; do 
