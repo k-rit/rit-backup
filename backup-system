@@ -44,10 +44,10 @@ MYSQL=/usr/bin/mysql
 MYSQLDUMP=/usr/bin/mysqldump
 
 #set excludes and basedir for Timestamp
-if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR="--exclude=$EXCLUDE_DIRS"; else EXCLUDE_DIR=""; fi
-if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE_DIR4="--exclude=$EXCLUDE_DIRS2"; else EXCLUDE_DIR4=""; fi
-if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR2=""; fi
-if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR3=""; fi
+if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR=`echo "--exclude=$EXCLUDE_DIRS" | sed 's/\///'`; else EXCLUDE_DIR=""; fi
+if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE_DIR4=`echo "--exclude=$EXCLUDE_DIRS2" | sed 's/\///'`; else EXCLUDE_DIR4=""; fi
+if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2=`echo "--exclude=$BACKUP_DIR" | sed 's/\///'`; else EXCLUDE_DIR2=""; fi
+if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3=`echo "--exclude=$SINUSBOT_BACKUPDIR" | sed 's/\///'`; else EXCLUDE_DIR3=""; fi
 if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
 
 # timestamp
