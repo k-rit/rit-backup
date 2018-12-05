@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Config
+BASEDIR=$(readlink -f "$0")
+BASEDIR=$(dirname "$BASEDIR")
 source ${BASEDIR}/backup-loadfunc
 
 fstart $0
