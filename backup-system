@@ -1,8 +1,8 @@
 #!/bin/bash
 #   -----------------------------------------------------------------------------------------
-#   Copyright (c) 2018 rilling.IT
+#   Copyright (c) 2018 rit
 #   -----------------------------------------------------------------------------------------
-#   Released under the GNU General Public License 
+#   Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.
 #   -----------------------------------------------------------------------------------------
 
 if [ "$1" == "f" ] || [ "$1" == "full" ] || [ "$1" == "Full" ]
@@ -15,15 +15,10 @@ fi
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
+BASENAME="$(basename $0)"
 
 source ${BASEDIR}/backup-loadconfig
 source ${BASEDIR}/backup-loadfunc
-
-#System[SOURCE]=${System[SOURCE]//[\"]}
-
-
-#DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-#echo "[${DATE_H}] - Starting $0"
 
 fstart $0
 
@@ -32,7 +27,7 @@ MYSQL_PW=`echo ${System[MYSQL_PW]} | base64 --decode`
 BACKUP_DIR=${System[BACKUP_DIR]}
 SQL_DIR=${System[SQL_DIR]}
 SOURCE=${System[SOURCE]}
-SOURCE="$SQL_DIR $SOURCE"
+SOURCE=`echo "$SOURCE $SQL_DIR" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 FULL_BACKUP_DAY=${System[FULL_BACKUP_DAY]}
 EXCLUDE_DIRS=${System[EXCLUDE_DIR]}
 EXCLUDE_DIRS2=${System[EXCLUDE_DIR2]}
@@ -40,11 +35,25 @@ EXCLUDE_DIRS2=${System[EXCLUDE_DIR2]}
 SINUSBOT_BACKUPDIR=${Sinusbot[DIR_BACKUP]}
 LOCAL_BACKUPS_NUM=${System[LOCAL_BACKUPS_NUM]}
 
-#Datum generieren
+# set date
 DATE=$(date +%Y-%m-%d--%H%M%S)
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
+TODAY=`date +%u`
 
-#Hostname
+# set MYSQL path
+MYSQL=/usr/bin/mysql
+MYSQLDUMP=/usr/bin/mysqldump
+
+#set excludes and basedir for Timestamp
+if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR="--exclude=$EXCLUDE_DIRS"; else EXCLUDE_DIR=""; fi
+if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE_DIR4="--exclude=$EXCLUDE_DIRS2"; else EXCLUDE_DIR4=""; fi
+if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR2=""; fi
+if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR3=""; fi
+if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
+
+# timestamp
+TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
+
+# hostname
 NAME=$(hostname)
 
 if [ ! -d "$BACKUP_DIR" ]
@@ -57,56 +66,25 @@ then
 	mkdir ${SQL_DIR}/backup
 fi
 
-#Alte MYSQL Sicherung Löschen
+# remove the old MYSQL backup
 rm $SQL_DIR/backup/*
 
-echo "[${DATE_H}] - The old MYSQL backup has been removed!"
+fstatus "The old MYSQL backup has been removed!"
 
 export MYSQL_PWD=${MYSQL_PW}
-
-MYSQL=/usr/bin/mysql
-MYSQLDUMP=/usr/bin/mysqldump
 
 #SQL Sichern
 $MYSQLDUMP -E -u ${MYSQL_BEN} --all-databases > ${SQL_DIR}/backup/backup-all-databases-$DATE.sql
 ftest $? "The full MYSQL-Backup has been successfully created" "Error while creating full MYSQL-Backup"
 
-databases=`$MYSQL --user=${MYSQL_BEN} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema)"`
- 
+databases=`$MYSQL --user=${MYSQL_BEN} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema)"` 
 for db in $databases; do
 	$MYSQLDUMP --force --opt --user=${MYSQL_BEN} --databases $db | gzip > "${SQL_DIR}/backup/$db-$DATE.sql.gz"
 done
 ftest $? "The single MYSQL-Backup has been successfully created" "Error while creating single MYSQL-Backup"
 
-#
-#
-###########################
-# TODO: update the next code
-#	end remove the error 
-#	"tar: Removing leading `/' from member names"
-#	-C / var/www
-###########################
-# 
 
-#DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-#echo "[${DATE_H}] - MYSQL Backup was created"
-#sleep 2s
-
-if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR="--exclude=$EXCLUDE_DIRS"; else EXCLUDE_DIR=""; fi
-if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE_DIR4="--exclude=$EXCLUDE_DIRS2"; else EXCLUDE_DIR4=""; fi
-if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2="--exclude=$BACKUP_DIR"; else EXCLUDE_DIR2=""; fi
-if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3="--exclude=$SINUSBOT_BACKUPDIR"; else EXCLUDE_DIR3=""; fi
-
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-
-# Temp start
-TODAY=`date +%u`
-BASENAME="$(basename $0)"
-if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
-TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
-# Temp end
-
-echo "[${DATE_H}] - Backup-${ART} started..." 
+fstatus "Backup-${ART} started..."
 if [ ${ART} == "Full" ]
 then
 	tar -cjpPf $BACKUP_DIR/backup-full-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 /
@@ -115,17 +93,14 @@ else
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 $SOURCE
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
 	else
-		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 $SOURCE
+		tar -cjpf $BACKUP_DIR/backup-system-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
 	fi
 fi
-#
-###########################
-#
+
 ftest $? "Backup-${ART} successfully completed :)" "Backup-${ART} exited with errors"
 
 
 fstatus "remove old backups"
 ${BASEDIR}/backup-remove $BACKUP_DIR $LOCAL_BACKUPS_NUM
-
