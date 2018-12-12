@@ -9,7 +9,7 @@
 # 3. the executing user has write access rights in all paths
 # 4. for information with several paths, the " are mandatory
 # 5. all passwords are base64 coded!
-# --> convert password with
+# --> convert the password with
 # 	 echo `echo PASSWORD | base64`
 # 6. before and after each = a space must exist
 # 7. backup days are as follows, 

@@ -8,6 +8,7 @@
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
+BASENAME="$(basename $0)"
 
 source ${BASEDIR}/backup-loadconfig
 source ${BASEDIR}/backup-loadfunc
@@ -16,18 +17,18 @@ fstart $0
 
 USER=${Sinusbot[USER]}
 DIR_ROOT=${Sinusbot[DIR_ROOT]}
+DIR_ROOT=`echo "$DIR_ROOT" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 DIR_BACKUP=${Sinusbot[DIR_BACKUP]}
+DIR_BACKUP=`echo "$DIR_BACKUP" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 LOCAL_BACKUPS_NUM=${Sinusbot[LOCAL_BACKUPS_NUM]}
 FULL_BACKUP_DAY=${Sinusbot[FULL_BACKUP_DAY]}
 
+# set date
 DATE=$(date +%Y-%m-%d--%H%M%S)
-
-# Temp start
 TODAY=`date +%u`
-BASENAME="$(basename $0)"
-TIMESTAMP="${DIR_ROOT}/${BASENAME}-timestamp.dat"
-# Temp end
 
+# timestamp
+TIMESTAMP="${DIR_ROOT}/${BASENAME}-timestamp.dat"
 
 if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
 if [ `whoami` = root ]
@@ -35,23 +36,25 @@ then
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
-		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
+		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT"
 	else
-		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT"
+		su - $USER -c "cd $DIR_ROOT ; tar -cjpf $DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT"
 	fi
 else
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
 		cd $DIR_ROOT
-		tar -cjpf $DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
+		tar -cjpf $DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT
 	else
 		cd $DIR_ROOT
-		tar -cjpf $DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP $DIR_ROOT
+		tar -cjpf $DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT
 	fi
 fi
+ftest $? "Backup-Sinusbot successfully completed :)" "Backup-Sinusbot exited with errors"
 
-fdone $0
+#fdone $0
 
+fstatus "remove old backups"
 ${BASEDIR}/backup-remove $DIR_BACKUP $LOCAL_BACKUPS_NUM
 

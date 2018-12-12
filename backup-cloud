@@ -8,16 +8,15 @@
 #Config
 BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
+BASENAME="$(basename $0)"
 
 source ${BASEDIR}/backup-loadconfig
-Cloud[DIRS]=${Cloud[DIRS]//[\"]}
+source ${BASEDIR}/backup-loadfunc
 
-
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
-
+fstart $0
 
 DIRS="${Cloud[DIRS]}"
+DIRS=`echo "$DIRS" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 BACKUP_DIR=${Cloud[BACKUP_DIR]}
 LOCAL_BACKUPS_NUM=${Cloud[LOCAL_BACKUPS_NUM]}
 FULL_BACKUP_DAY=${Cloud[FULL_BACKUP_DAY]}
@@ -26,32 +25,32 @@ NUM=$(echo ${DIRS} | awk '{print NF}')
 NUM=$((NUM-1))
 IFS=' ' read -r -a DIR_ROOT <<< "$DIRS"
 
-# Temp start
+# set date
 TODAY=`date +%u`
-BASENAME="$(basename $0)"
+
 if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
-# Temp end
+
 
 for i in $(eval echo "{0..$NUM}")
 do
-	if [ ! -d ${DIR_ROOT[$i]} ]; then exit; fi
-	echo "Doing Backup of '${DIR_ROOT[$i]}'"
+	if [ ! -d ${DIR_ROOT[$i]} ];
+	then fstatus "${DIR_ROOT[$i]} not found";exit 1;
+	fi
+	fstatus "Doing Backup of '${DIR_ROOT[$i]}'"
 	NAME=$(basename ${DIR_ROOT[$i]})
 	DATE=$(date +%Y-%m-%d--%H%M%S)
 	TIMESTAMP="${BASEDIR2}${BASENAME}-$NAME-timestamp.dat"
-	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi
-	
+	if [ ! -d $BACKUP_DIR/$NAME ]; then mkdir $BACKUP_DIR/$NAME; fi	
 	if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
 	if [ $TODAY == ${FULL_BACKUP_DAY} ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE-ful.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
+		tar -cjpf $BACKUP_DIR/${NAME}/${NAME}-${DATE}-ful.tar.bz2 -g ${TIMESTAMP} -C / ${DIR_ROOT[$i]}
 	else
-		tar -cjpf $BACKUP_DIR/$NAME/$NAME-$DATE-inc.tar.bz2 -g ${TIMESTAMP} ${DIR_ROOT[$i]}
+		tar -cjpf $BACKUP_DIR/${NAME}/${NAME}-${DATE}-inc.tar.bz2 -g ${TIMESTAMP} -C / ${DIR_ROOT[$i]}
 	fi
-	
-	${BASEDIR}/backup-remove $BACKUP_DIR/$NAME $LOCAL_BACKUPS_NUM
+	ftest $? "Backup-${NAME} successfully completed :)" "Backup-${NAME} exited with errors"
+
+	${BASEDIR}/backup-remove $BACKUP_DIR/${NAME} $LOCAL_BACKUPS_NUM
 done
 
-#echo $DIR
-exit
