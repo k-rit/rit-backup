@@ -1,19 +1,31 @@
-# pfad sollte nicht mit "/" enden!
-# Dies ist nur ein Beispiel - bitte anpassen.
-# Man muss schreibberechtigt im entsprechenden Verzeichnis sein.
-# Wichtig sind die leerzeichen vor und hinter dem "="
+#   -----------------------------------------------------------------------------------------
+#   Copyright (c) 2018 rit
+#   -----------------------------------------------------------------------------------------
+#   Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License.
+#   -----------------------------------------------------------------------------------------
+##
+# 1. all specified paths are exemplary
+# 2. all paths should not end with a "/".
+# 3. the executing user has write access rights in all paths
+# 4. for information with several paths, the " are mandatory
+# 5. all passwords are base64 coded!
+# --> convert password with
+# 	 echo `echo PASSWORD | base64`
+# 6. before and after each = a space must exist
+# 7. backup days are as follows, 
+# --> Mon=1; Tue=2; Wed=3; Thu=4; Fri=5; Sat=6; Sun=7;
+##
 
 [System]
 MYSQL_BEN = user
-# Passwoerter sind in base64 kodiert!!
-# Codieren mit --> echo `echo password | base64`
+# password follows
 MYSQL_PW = password
 BACKUP_DIR = /root/backup
 SQL_DIR = /var/lib/mysql
 SOURCE = "/var/www /etc /opt /var/spool/cron/crontabs"
 ON = no
+# backup day follows
 LOCAL_BACKUPS_NUM = 7
-# Mo=1;Di=2;Mi=3;Do=4;Fr=5;Sa=6;So=7;
 FULL_BACKUP_DAY = 1
 EXCLUDE_DIR = /var/log/
 EXCLUDE_DIR2 = /var/log/
@@ -23,16 +35,16 @@ USER = sinusbot
 DIR_ROOT = /opt/sinusbot
 DIR_BACKUP = /opt/sinusbot/backup
 ON = no
+# backup day follows
 LOCAL_BACKUPS_NUM = 7
-# Mo=1;Di=2;Mi=3;Do=4;Fr=5;Sa=6;So=7;
 FULL_BACKUP_DAY = 1
 
 [Cloud]
 DIRS = "/data/CloudHome /data/CloudOffice"
 BACKUP_DIR = /data/backups
 ON = no
+# backup day follows
 LOCAL_BACKUPS_NUM = 7
-# Mo=1;Di=2;Mi=3;Do=4;Fr=5;Sa=6;So=7;
 FULL_BACKUP_DAY = 1
 
 [Copy]
@@ -57,8 +69,7 @@ LOCAL_BACKUPS_NUM = 7
 
 [Server1]
 IP = 127.0.0.1
-# Passwoerter sind in base64 kodiert!!
-# Codieren mit --> echo `echo password | base64`
+# password follows
 PW = ChangeMe
 PORT = 22
 NAME = MyServer1
@@ -66,8 +77,7 @@ EX_DIR = /root/backup
 
 [Server2]
 IP = 127.0.0.1
-# Passwoerter sind in base64 kodiert!!
-# Codieren mit --> echo `echo password | base64`
+# password follows
 PW = ChangeMe
 PORT = 22
 NAME = MyServer2
@@ -75,8 +85,7 @@ EX_DIR = /root/backup
 
 [Server3]
 IP = 127.0.0.1
-# Passwoerter sind in base64 kodiert!!
-# Codieren mit --> echo `echo password | base64`
+# password follows
 PW = ChangeMe
 PORT = 22
 NAME = MyServer3
