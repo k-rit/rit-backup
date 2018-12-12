@@ -10,11 +10,9 @@ BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
 
 source ${BASEDIR}/backup-loadconfig
+source ${BASEDIR}/backup-loadfunc
 
-
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
-
+fstart $0
 
 IN_DIR=${Download[IN_DIR]}
 USER=${Download[USER]}
@@ -22,12 +20,18 @@ GROUP=${Download[GROUP]}
 NUM=${Download[NUM]}
 LOCAL_BACKUPS_NUM=${Download[LOCAL_BACKUPS_NUM]}
 
+##
+# TODO:
+# a configurable login user for the download server
+# default: root
+##
+
 for i in $(eval echo "{1..$NUM}")
 do
 	eval varAlias=(\${"Server"$i[@]})
 	EX_DIR="${varAlias[0]}"
 	PW="${varAlias[1]}"
-	PW=`echo $PW | base64 --decode`
+	PW=`echo ${PW} | base64 --decode`
 	PORT=${varAlias[2]}
 	IP=${varAlias[3]}
 	NAME=${varAlias[4]}
@@ -35,16 +39,14 @@ do
 	#echo "$varAlias"
 	#echo "$EX_DIR | $PW | $IP | $PORT | $NAME"
 
-	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-	echo "[${DATE_H}] - Starte Download von $NAME"
+	fstatus "${NAME} --> download started"
 
 	sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
 	#--progress --stats
+
+	ftest $? "${NAME} --> donwload finished" "${NAME} --> download failed"
+
 	${BASEDIR}/backup-remove ${IN_DIR}/${NAME} $LOCAL_BACKUPS_NUM
 done
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - download finished"
-
-exit
-
+fdone $0

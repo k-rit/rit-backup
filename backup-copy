@@ -10,9 +10,9 @@ BASEDIR=$(readlink -f "$0")
 BASEDIR=$(dirname "$BASEDIR")
 
 source ${BASEDIR}/backup-loadconfig
+source ${BASEDIR}/backup-loadfunc
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - Starting $0"
+fstart $0
 
 DIR_FROM=${Copy[DIR_FROM]}
 USER=${Download[USER]}
@@ -20,6 +20,11 @@ GROUP=${Download[GROUP]}
 DIR_TO=${Copy[DIR_TO]}
 LOCAL_BACKUPS_NUM=${Copy[LOCAL_BACKUPS_NUM]}
 TYPE=${Copy[TYPE]}
+
+##
+# TODO:
+# maybe, timestamps for individual copy operations 
+##
 
 if [ "$TYPE" == "dir" ] || [ "$TYPE" == "d" ]
 then
@@ -36,7 +41,4 @@ then
 	${BASEDIR}/backup-remove ${DIR_TO} $LOCAL_BACKUPS_NUM
 fi
 
-DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-echo "[${DATE_H}] - copy completed"
-
-exit
+fdone $0
