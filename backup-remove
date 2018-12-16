@@ -17,23 +17,24 @@ if [ ! $2 ] ; then let MAXCOUNT=7; else let MAXCOUNT=$2; fi
 
 let COUNTER=0
 
-for BACKUPFILE in $DIR_BACKUP/*; do
+cd $DIR_BACKUP
+echo "Path: $DIR_BACKUP"
+for BACKUPFILE in *; do
 	let COUNTER=$COUNTER+1
-	#echo $BACKUPFILE
 	du -h $BACKUPFILE
 done
-echo "Backup count:" $COUNTER
+
+echo "Backup count: $COUNTER | Backup maxcount: $MAXCOUNT"
 if test $COUNTER -gt $MAXCOUNT;
 then
 	echo "Too many backups, forcing deletion..."
 	let NEWCOUNTER=0
-	for DELETEFILE in $DIR_BACKUP/*; do
+	for DELETEFILE in *; do
 		let NEWCOUNTER=$NEWCOUNTER+1	
 		let TEMP=$COUNTER-$MAXCOUNT
 		if test $NEWCOUNTER -le $TEMP;
 		then
 			rm $DELETEFILE
-			#echo "Deleting file" $DELETEFILE
 			eerr "Deleting file $DELETEFILE"
 		fi
 	done
@@ -41,8 +42,4 @@ else
 	echo "Nothing to do."
 fi
 
-#echo "[${DATE_H}] - remove finished"
 fstatus "remove finished"
-
-
-exit
