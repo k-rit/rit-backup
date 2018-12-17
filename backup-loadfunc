@@ -35,6 +35,7 @@ function ftest() {
 # use: fstart
 # or: fstart "Progamm"
 function fstart() {
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 	if [ "$1" == "" ]
 	then
 		VARI=$0
@@ -42,25 +43,40 @@ function fstart() {
 		VARI=$1
 	fi
 
-	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 	echo "[${DATE_H}] - Starting $VARI"
 }
 
 # to echo a event/status with timestamp
 # use: fstatus "event"
 function fstatus() {
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 	if [ "$1" == "" ]
 	then
 		exit 1
+	else
+		echo "[${DATE_H}] - $1"
 	fi
+}
+
+# to echo a error with timestamp
+# use: ferror "the error"
+# or: ferror
+function ferror() {
 	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
-	echo "[${DATE_H}] - $1"
+	if [ "$1" == "" ]
+	then
+		eerr "[${DATE_H}] - ERROR!"
+		exit 1
+	else
+		eerr "[${DATE_H}] - $1"
+	fi
 }
 
 # to echo a exit with timestamp
 # use: fdone
 # or: fdone "Progamm"
 function fdone() {
+	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 	if [ "$1" == "" ]
 	then
 		VARI=$0
@@ -68,7 +84,6 @@ function fdone() {
 		VARI=$1
 	fi
 
-	DATE_H=$(date +%d.%m.%Y-%H:%M:%S)
 	echo "[${DATE_H}] - Exit $VARI"
 }
 
