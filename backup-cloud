@@ -34,7 +34,7 @@ if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
 for i in $(eval echo "{0..$NUM}")
 do
 	if [ ! -d "/${DIR_ROOT[$i]}" ]; then ferror "/${DIR_ROOT[$i]} not found"; exit 1; fi
-	fstatus "Doing Backup of '${DIR_ROOT[$i]}'"
+	fstatus "Doing Backup of /${DIR_ROOT[$i]}"
 	NAME=$(basename ${DIR_ROOT[$i]})
 	DATE=$(date +%Y-%m-%d--%H%M%S)
 	TIMESTAMP="${BASEDIR2}${BASENAME}-$NAME-timestamp.dat"
