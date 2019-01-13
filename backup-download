@@ -43,9 +43,10 @@ do
 
 	sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
 	#--progress --stats
-	ftest $? "${NAME} --> donwload finished" "${NAME} --> download failed"
+	TEST=$?
+	ftest $TEST "${NAME} --> donwload finished" "${NAME} --> download failed"
 
-	if [ ! $1 -eq 0 ]
+	if [ $TEST -ne 0 ]
 	then
 		fstatus "${NAME} --> trying to restart"
 		sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
