@@ -69,6 +69,7 @@ LOCAL_BACKUPS_NUM = 7
 
 [Server1]
 IP = 127.0.0.1
+USER = root
 # password follows
 PW = ChangeMe
 PORT = 22
@@ -77,6 +78,7 @@ EX_DIR = /root/backup
 
 [Server2]
 IP = 127.0.0.1
+USER = root
 # password follows
 PW = ChangeMe
 PORT = 22
@@ -85,6 +87,7 @@ EX_DIR = /root/backup
 
 [Server3]
 IP = 127.0.0.1
+USER = root
 # password follows
 PW = ChangeMe
 PORT = 22

@@ -20,12 +20,6 @@ GROUP=${Download[GROUP]}
 NUM=${Download[NUM]}
 LOCAL_BACKUPS_NUM=${Download[LOCAL_BACKUPS_NUM]}
 
-##
-# TODO:
-# a configurable login user for the download server
-# default: root
-##
-
 for i in $(eval echo "{1..$NUM}")
 do
 	eval varAlias=(\${"Server"$i[@]})
@@ -35,13 +29,15 @@ do
 	PORT=${varAlias[2]}
 	IP=${varAlias[3]}
 	NAME=${varAlias[4]}
+	R_USER=${varAlias[5]}
 
 	#echo "$varAlias"
-	#echo "$EX_DIR | $PW | $IP | $PORT | $NAME"
+	#echo "$EX_DIR | $PW | $IP | $PORT | $NAME | $R_USER"
+	#exit 0
 
 	fstatus "${NAME} --> download started"
 
-	sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
+	sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" ${R_USER}@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME} > /dev/null 2>&1
 	#--progress --stats
 	TEST=$?
 	ftest $TEST "${NAME} --> donwload finished" "${NAME} --> download failed"
@@ -49,7 +45,7 @@ do
 	if [ $TEST -ne 0 ]
 	then
 		fstatus "${NAME} --> trying to restart"
-		sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" root@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME}
+		sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" ${R_USER}@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME} > /dev/null 2>&1
 		ftest $? "${NAME} --> donwload finished" "${NAME} --> download failed"
 	fi	
 
