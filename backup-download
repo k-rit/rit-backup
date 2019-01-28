@@ -44,6 +44,7 @@ do
 
 	if [ $TEST -ne 0 ]
 	then
+		sleep 10
 		fstatus "${NAME} --> trying to restart"
 		sshpass -p $PW rsync --stats --chown=$USER:$GROUP -trzhPogpq -e "ssh -p ${PORT}" ${R_USER}@${IP}:${EX_DIR}/ ${IN_DIR}/${NAME} > /dev/null 2>&1
 		ftest $? "${NAME} --> donwload finished" "${NAME} --> download failed"
