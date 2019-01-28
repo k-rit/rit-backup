@@ -43,9 +43,9 @@ do
 	if [ $TODAY == ${FULL_BACKUP_DAY} ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpf $BACKUP_DIR/${NAME}/${NAME}-${DATE}-ful.tar.bz2 -g ${TIMESTAMP} -C / ${DIR_ROOT[$i]}
+		tar -czpf $BACKUP_DIR/${NAME}/${NAME}-${DATE}-ful.tar.gz -g ${TIMESTAMP} -C / ${DIR_ROOT[$i]}
 	else
-		tar -cjpf $BACKUP_DIR/${NAME}/${NAME}-${DATE}-inc.tar.bz2 -g ${TIMESTAMP} -C / ${DIR_ROOT[$i]}
+		tar -czpf $BACKUP_DIR/${NAME}/${NAME}-${DATE}-inc.tar.gz -g ${TIMESTAMP} -C / ${DIR_ROOT[$i]}
 	fi
 	ftest $? "Backup-${NAME} successfully completed :)" "Backup-${NAME} exited with errors"
 

@@ -87,15 +87,15 @@ ftest $? "The single MYSQL-Backup has been successfully created" "Error while cr
 fstatus "Backup-${ART} started..."
 if [ ${ART} == "Full" ]
 then
-	tar -cjpPf $BACKUP_DIR/bu-ful-${NAME}-$DATE.tar.bz2 --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 /
+	tar -czpPf $BACKUP_DIR/bu-ful-${NAME}-$DATE.tar.gz --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 /
 else
 	if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		rm ${TIMESTAMP}
-		tar -cjpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-ful.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
+		tar -czpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-ful.tar.gz -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
 	else
-		tar -cjpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-inc.tar.bz2 -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
+		tar -czpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-inc.tar.gz -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
 	fi
 fi
 

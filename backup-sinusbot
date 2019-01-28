@@ -36,19 +36,19 @@ then
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		if [ -f ${TIMESTAMP} ]; then fstatus "Remove old Timestamp"; rm ${TIMESTAMP}; fi
-		su - $USER -c "cd /$DIR_ROOT ; tar -cjpf /$DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT"
+		su - $USER -c "cd /$DIR_ROOT ; tar -czpf /$DIR_BACKUP/sinusbot-$DATE-ful.tar.gz -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT"
 	else
-		su - $USER -c "cd /$DIR_ROOT ; tar -cjpf /$DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT"
+		su - $USER -c "cd /$DIR_ROOT ; tar -czpf /$DIR_BACKUP/sinusbot-$DATE-inc.tar.gz -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT"
 	fi
 else
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
 	then
 		if [ -f ${TIMESTAMP} ]; then fstatus "Remove old Timestamp"; rm ${TIMESTAMP}; fi
 		cd $DIR_ROOT
-		tar -cjpf /$DIR_BACKUP/sinusbot-$DATE-ful.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT
+		tar -czpf /$DIR_BACKUP/sinusbot-$DATE-ful.tar.gz -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT
 	else
 		cd $DIR_ROOT
-		tar -cjpf /$DIR_BACKUP/sinusbot-$DATE-inc.tar.bz2 -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT
+		tar -czpf /$DIR_BACKUP/sinusbot-$DATE-inc.tar.gz -g ${TIMESTAMP} --exclude=$DIR_BACKUP -C / $DIR_ROOT
 	fi
 fi
 ftest $? "Backup-Sinusbot successfully completed :)" "Backup-Sinusbot exited with errors"
