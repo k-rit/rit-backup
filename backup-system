@@ -22,12 +22,16 @@ source ${BASEDIR}/backup-loadfunc
 
 fstart $0
 
+# set Temp paths for mysql
+MYSQL_DIR=/tmp/mysql_backup
+MYSQL_SINGLE_DIR=${MYSQL_DIR}/sql
+
 MYSQL_BEN=${System[MYSQL_BEN]}
 MYSQL_PW=`echo ${System[MYSQL_PW]} | base64 --decode`
 BACKUP_DIR=${System[BACKUP_DIR]}
 SQL_DIR=${System[SQL_DIR]}
 SOURCE=${System[SOURCE]}
-SOURCE=`echo "$SOURCE $SQL_DIR" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
+SOURCE=`echo "$SOURCE $MYSQL_DIR" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 FULL_BACKUP_DAY=${System[FULL_BACKUP_DAY]}
 EXCLUDE_DIRS=${System[EXCLUDE_DIR]}
 EXCLUDE_DIRS2=${System[EXCLUDE_DIR2]}
@@ -61,28 +65,43 @@ then
 	mkdir ${BACKUP_DIR}
 fi
 
+#################################################################################
+#
+# MYSQL
+#
+
 if [ ! -d "$SQL_DIR/backup" ]
 then
-	mkdir ${SQL_DIR}/backup
+	rm -R ${SQL_DIR}/backup
+fi
+
+if [ ! -d "${MYSQL_SINGLE_DIR}" ]
+then
+	mkdir -p ${MYSQL_SINGLE_DIR}
 fi
 
 # remove the old MYSQL backup
-rm $SQL_DIR/backup/*
-
+rm ${MYSQL_SINGLE_DIR}/*
+rm ${MYSQL_DIR}/*.*
 fstatus "The old MYSQL backup has been removed!"
 
 export MYSQL_PWD=${MYSQL_PW}
 
-#SQL Sichern
-$MYSQLDUMP -E -u ${MYSQL_BEN} --all-databases > ${SQL_DIR}/backup/backup-all-databases-$DATE.sql
+# single SQL
+$MYSQLDUMP -E -u ${MYSQL_BEN} --all-databases | gzip > "${MYSQL_SINGLE_DIR}/backup-all-databases-$DATE.sql.gz"
 ftest $? "The full MYSQL-Backup has been successfully created" "Error while creating full MYSQL-Backup"
 
 databases=`$MYSQL --user=${MYSQL_BEN} -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema)"` 
 for db in $databases; do
-	$MYSQLDUMP --force --opt --user=${MYSQL_BEN} --databases $db | gzip > "${SQL_DIR}/backup/$db-$DATE.sql.gz"
+	$MYSQLDUMP --force --opt --user=${MYSQL_BEN} --databases $db | gzip > "${MYSQL_SINGLE_DIR}/$db-$DATE.sql.gz"
 done
 ftest $? "The single MYSQL-Backup has been successfully created" "Error while creating single MYSQL-Backup"
 
+# directory
+tar -czpf ${MYSQL_DIR}/mysql-dir-$DATE.tar.gz -C / $SQL_DIR > /dev/null 2>1&
+fstatus "The MYSQL-Directory-Backup has been successfully created"
+
+###################################################################################
 
 fstatus "Backup-${ART} started..."
 if [ ${ART} == "Full" ]
