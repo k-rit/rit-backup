@@ -101,6 +101,8 @@ ftest $? "The single MYSQL-Backup has been successfully created" "Error while cr
 tar -czpf ${MYSQL_DIR}/mysql-dir-$DATE.tar.gz -C / $SQL_DIR > /dev/null 2>1&
 fstatus "The MYSQL-Directory-Backup has been successfully created"
 
+sleep 2
+
 ###################################################################################
 
 fstatus "Backup-${ART} started..."
