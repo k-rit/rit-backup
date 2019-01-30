@@ -110,8 +110,7 @@ if [ ${ART} == "Full" ]
 then
 	tar -czpPf $BACKUP_DIR/bu-ful-${NAME}-$DATE.tar.gz --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 /
 else
-	if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
-	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ]
+	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ] || [ ! -f ${TIMESTAMP} ]
 	then
 		rm ${TIMESTAMP}
 		tar -czpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-ful.tar.gz -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
