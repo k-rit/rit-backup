@@ -30,6 +30,7 @@ MYSQL_BEN=${System[MYSQL_BEN]}
 MYSQL_PW=`echo ${System[MYSQL_PW]} | base64 --decode`
 BACKUP_DIR=${System[BACKUP_DIR]}
 SQL_DIR=${System[SQL_DIR]}
+SQL_DIR=`echo "$SQL_DIR" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 SOURCE=${System[SOURCE]}
 SOURCE=`echo "$SOURCE $MYSQL_DIR" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 FULL_BACKUP_DAY=${System[FULL_BACKUP_DAY]}
@@ -98,7 +99,7 @@ done
 ftest $? "The single MYSQL-Backup has been successfully created" "Error while creating single MYSQL-Backup"
 
 # directory
-tar -czpf ${MYSQL_DIR}/mysql-dir-$DATE.tar.gz -C / $SQL_DIR > /dev/null 2>1&
+tar -czpf ${MYSQL_DIR}/mysql-dir-$DATE.tar.gz -C / $SQL_DIR 1>/dev/null 2>/dev/null
 fstatus "The MYSQL-Directory-Backup has been successfully created"
 
 sleep 2
