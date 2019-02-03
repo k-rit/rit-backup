@@ -71,7 +71,7 @@ fi
 # MYSQL
 #
 
-if [ ! -d "$SQL_DIR/backup" ]
+if [ -d "$SQL_DIR/backup" ]
 then
 	rm -R ${SQL_DIR}/backup
 fi
@@ -80,11 +80,13 @@ if [ ! -d "${MYSQL_SINGLE_DIR}" ]
 then
 	mkdir -p ${MYSQL_SINGLE_DIR}
 fi
-
-# remove the old MYSQL backup
-rm ${MYSQL_SINGLE_DIR}/*
-rm ${MYSQL_DIR}/*.*
-fstatus "The old MYSQL backup has been removed!"
+el if [ -d "${MYSQL_DIR}" ] || [ -d "${MYSQL_SINGLE_DIR}" ]
+then
+	# remove the old MYSQL backup
+	rm ${MYSQL_SINGLE_DIR}/* 1>/dev/null 2>/dev/null
+	rm ${MYSQL_DIR}/*.* 1>/dev/null 2>/dev/null
+	fstatus "The old MYSQL backup has been removed!"
+fi
 
 export MYSQL_PWD=${MYSQL_PW}
 
@@ -121,7 +123,6 @@ else
 fi
 
 ftest $? "Backup-${ART} successfully completed :)" "Backup-${ART} exited with errors"
-
 
 fstatus "remove old backups"
 ${BASEDIR}/backup-remove $BACKUP_DIR $LOCAL_BACKUPS_NUM
