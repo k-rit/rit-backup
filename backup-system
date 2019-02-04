@@ -80,7 +80,7 @@ if [ ! -d "${MYSQL_SINGLE_DIR}" ]
 then
 	mkdir -p ${MYSQL_SINGLE_DIR}
 fi
-el if [ -d "${MYSQL_DIR}" ] || [ -d "${MYSQL_SINGLE_DIR}" ]
+if [ -d "${MYSQL_DIR}" ] || [ -d "${MYSQL_SINGLE_DIR}" ]
 then
 	# remove the old MYSQL backup
 	rm ${MYSQL_SINGLE_DIR}/* 1>/dev/null 2>/dev/null
