@@ -15,6 +15,8 @@ fstart $0
 if [ ! $1 ] ; then exit ; else DIR_BACKUP=$1; fi
 if [ ! $2 ] ; then let MAXCOUNT=7; else let MAXCOUNT=$2; fi
 
+if [ ! -d "${DIR_BACKUP}" ]; ferror "Directory not found!"; fi
+
 let COUNTER=0
 
 cd $DIR_BACKUP

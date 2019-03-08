@@ -66,10 +66,10 @@ function ferror() {
 	if [ "$1" == "" ]
 	then
 		eerr "[${DATE_H}] - ERROR!"
-		exit 1
 	else
 		eerr "[${DATE_H}] - $1"
 	fi
+	exit 1
 }
 
 # to echo a exit with timestamp
