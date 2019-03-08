@@ -61,22 +61,16 @@ TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
 # hostname
 NAME=$(hostname)
 
-if [ ! -d "$BACKUP_DIR" ]; then; mkdir -p ${BACKUP_DIR}; fi
+if [ ! -d "$BACKUP_DIR" ]; then mkdir -p ${BACKUP_DIR}; fi
 
 #################################################################################
 #
 # MYSQL
 #
 
-if [ -d "$SQL_DIR/backup" ]
-then
-	rm -R ${SQL_DIR}/backup
-fi
+if [ -d "$SQL_DIR/backup" ]; then rm -R ${SQL_DIR}/backup; fi
 
-if [ ! -d "${MYSQL_SINGLE_DIR}" ]
-then
-	mkdir -p ${MYSQL_SINGLE_DIR}
-fi
+if [ ! -d "${MYSQL_SINGLE_DIR}" ]; then mkdir -p ${MYSQL_SINGLE_DIR}; fi
 if [ -d "${MYSQL_DIR}" ] || [ -d "${MYSQL_SINGLE_DIR}" ]
 then
 	# remove the old MYSQL backup
