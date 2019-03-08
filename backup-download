@@ -20,10 +20,15 @@ GROUP=${Download[GROUP]}
 NUM=${Download[NUM]}
 LOCAL_BACKUPS_NUM=${Download[LOCAL_BACKUPS_NUM]}
 
+if [ ! -d "$IN_DIR" ]; then; mkdir -p ${IN_DIR}; fi
+
 for i in $(eval echo "{1..$NUM}")
 do
 	eval varAlias=(\${"Server"$i[@]})
 	EX_DIR="${varAlias[0]}"
+
+	if [ ! -d "$EX_DIR" ]; then ; mkdir -p ${EX_DIR}; fi
+
 	PW="${varAlias[1]}"
 	PW=`echo ${PW} | base64 --decode`
 	PORT=${varAlias[2]}

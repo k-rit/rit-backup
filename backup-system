@@ -61,10 +61,7 @@ TIMESTAMP="${BASEDIR2}${BASENAME}-timestamp.dat"
 # hostname
 NAME=$(hostname)
 
-if [ ! -d "$BACKUP_DIR" ]
-then
-	mkdir ${BACKUP_DIR}
-fi
+if [ ! -d "$BACKUP_DIR" ]; then; mkdir -p ${BACKUP_DIR}; fi
 
 #################################################################################
 #

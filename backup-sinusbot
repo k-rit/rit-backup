@@ -30,6 +30,9 @@ TODAY=`date +%u`
 # timestamp
 TIMESTAMP="/${DIR_ROOT}/${BASENAME}-timestamp.dat"
 
+if [ ! -d "$DIR_BACKUP" ]; then; mkdir -p ${DIR_BACKUP}; fi
+
+
 if [ ! -f ${TIMESTAMP} ]; then TODAY=${FULL_BACKUP_DAY}; fi
 if [ `whoami` = root ]
 then

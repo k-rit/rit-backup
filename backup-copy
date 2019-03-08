@@ -21,6 +21,9 @@ DIR_TO=${Copy[DIR_TO]}
 LOCAL_BACKUPS_NUM=${Copy[LOCAL_BACKUPS_NUM]}
 TYPE=${Copy[TYPE]}
 
+if [ ! -d "$DIR_FROM" ]; then; mkdir -p ${DIR_FROM}; fi
+if [ ! -d "$DIR_TO" ]; then; mkdir -p ${DIR_TO}; fi
+
 ##
 # TODO:
 # maybe, timestamps for individual copy operations 

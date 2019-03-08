@@ -30,7 +30,6 @@ TODAY=`date +%u`
 
 if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
 
-
 for i in $(eval echo "{0..$NUM}")
 do
 	if [ ! -d "/${DIR_ROOT[$i]}" ]; then ferror "/${DIR_ROOT[$i]} not found"; exit 1; fi
