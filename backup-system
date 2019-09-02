@@ -52,10 +52,10 @@ MYSQLDUMP=/usr/bin/mysqldump
 
 #set excludes and basedir for Timestamp
 EXCLUDE=""
-if [ -d $EXCLUDE_DIRS ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS" | sed 's/\///'`; fi
-if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS2" | sed 's/\///'`; fi
-if [ -d $EXCLUDE_DIRS3 ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS3" | sed 's/\///'`; fi
-if [ -d $EXCLUDE_DIRS4 ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS4" | sed 's/\///'`; fi
+if [ -d ${EXCLUDE_DIRS} ]; then EXCLUDE+=`echo " --exclude=${EXCLUDE_DIRS}" | sed 's/\///'`; fi
+if [ -d ${EXCLUDE_DIRS2} ]; then EXCLUDE+=`echo " --exclude=${EXCLUDE_DIRS2}" | sed 's/\///'`; fi
+if [ -d ${EXCLUDE_DIRS3} ]; then EXCLUDE+=`echo " --exclude=${EXCLUDE_DIRS3}" | sed 's/\///'`; fi
+if [ -d ${EXCLUDE_DIRS4} ]; then EXCLUDE+=`echo " --exclude=${EXCLUDE_DIRS4}" | sed 's/\///'`; fi
 
 if [ -d $BACKUP_DIR ]; then EXCLUDE+=`echo " --exclude=$BACKUP_DIR" | sed 's/\///'`; fi
 if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE+=`echo " --exclude=$SINUSBOT_BACKUPDIR" | sed 's/\///'`; fi
