@@ -36,6 +36,8 @@ SOURCE=`echo "$SOURCE $MYSQL_DIR" | sed 's/"//g' | cut -c 2- | sed 's/ \// /g'`
 FULL_BACKUP_DAY=${System[FULL_BACKUP_DAY]}
 EXCLUDE_DIRS=${System[EXCLUDE_DIR]}
 EXCLUDE_DIRS2=${System[EXCLUDE_DIR2]}
+EXCLUDE_DIRS3=${System[EXCLUDE_DIR3]}
+EXCLUDE_DIRS4=${System[EXCLUDE_DIR4]}
 
 SINUSBOT_BACKUPDIR=${Sinusbot[DIR_BACKUP]}
 LOCAL_BACKUPS_NUM=${System[LOCAL_BACKUPS_NUM]}
@@ -49,10 +51,15 @@ MYSQL=/usr/bin/mysql
 MYSQLDUMP=/usr/bin/mysqldump
 
 #set excludes and basedir for Timestamp
-if [ -d $EXCLUDE_DIRS ]; then EXCLUDE_DIR=`echo "--exclude=$EXCLUDE_DIRS" | sed 's/\///'`; else EXCLUDE_DIR=""; fi
-if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE_DIR4=`echo "--exclude=$EXCLUDE_DIRS2" | sed 's/\///'`; else EXCLUDE_DIR4=""; fi
-if [ -d $BACKUP_DIR ]; then EXCLUDE_DIR2=`echo "--exclude=$BACKUP_DIR" | sed 's/\///'`; else EXCLUDE_DIR2=""; fi
-if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE_DIR3=`echo "--exclude=$SINUSBOT_BACKUPDIR" | sed 's/\///'`; else EXCLUDE_DIR3=""; fi
+EXCLUDE=""
+if [ -d $EXCLUDE_DIRS ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS" | sed 's/\///'`; fi
+if [ -d $EXCLUDE_DIRS2 ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS2" | sed 's/\///'`; fi
+if [ -d $EXCLUDE_DIRS3 ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS3" | sed 's/\///'`; fi
+if [ -d $EXCLUDE_DIRS4 ]; then EXCLUDE+=`echo " --exclude=$EXCLUDE_DIRS4" | sed 's/\///'`; fi
+
+if [ -d $BACKUP_DIR ]; then EXCLUDE+=`echo " --exclude=$BACKUP_DIR" | sed 's/\///'`; fi
+if [ -d $SINUSBOT_BACKUPDIR ]; then EXCLUDE+=`echo " --exclude=$SINUSBOT_BACKUPDIR" | sed 's/\///'`; fi
+
 if [ $BASEDIR == "." ]; then BASEDIR2=""; else BASEDIR2="${BASEDIR}/"; fi
 
 # timestamp
@@ -102,14 +109,14 @@ sleep 2
 fstatus "Backup-${ART} started..."
 if [ ${ART} == "Full" ]
 then
-	tar -czpPf $BACKUP_DIR/bu-ful-${NAME}-$DATE.tar.gz --one-file-system $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 /
+	tar -czpPf $BACKUP_DIR/bu-ful-${NAME}-$DATE.tar.gz --one-file-system ${EXCLUDE} /
 else
 	if [ "${TODAY}" == "${FULL_BACKUP_DAY}" ] || [ ! -f ${TIMESTAMP} ]
 	then
-		rm ${TIMESTAMP}
-		tar -czpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-ful.tar.gz -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
+		rm -f ${TIMESTAMP}
+		tar -czpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-ful.tar.gz -g ${TIMESTAMP} ${EXCLUDE} -C / $SOURCE
 	else
-		tar -czpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-inc.tar.gz -g ${TIMESTAMP} $EXCLUDE_DIR $EXCLUDE_DIR2 $EXCLUDE_DIR3 $EXCLUDE_DIR4 -C / $SOURCE
+		tar -czpf $BACKUP_DIR/bu-sys-${NAME}-$DATE-inc.tar.gz -g ${TIMESTAMP} ${EXCLUDE} -C / $SOURCE
 	fi
 fi
 
