@@ -25,17 +25,24 @@ if [ ! -d "$IN_DIR" ]; then mkdir -p ${IN_DIR}; fi
 for i in $(eval echo "{1..$NUM}")
 do
 	eval varAlias=(\${"Server"$i[@]})
-	EX_DIR="${varAlias[0]}"
+	EX_DIR="${varAlias[4]}"
 	PW="${varAlias[1]}"
 	PW=`echo ${PW} | base64 --decode`
-	PORT=${varAlias[2]}
-	IP=${varAlias[3]}
-	NAME=${varAlias[4]}
-	R_USER=${varAlias[5]}
+	PORT=${varAlias[3]}
+	IP=${varAlias[2]}
+	NAME=${varAlias[5]}
+	R_USER=${varAlias[0]}
 
 	#echo "$varAlias"
-	#echo "$EX_DIR | $PW | $IP | $PORT | $NAME | $R_USER"
+	#echo "${varAlias[0]} | ${varAlias[1]} | ${varAlias[2]} | ${varAlias[3]} | ${varAlias[4]} | ${varAlias[5]}"
 	#exit 0
+
+	########
+	# TODO:
+	#
+	# Check if host is knowen
+	# if not, add this ip
+	########
 
 	fstatus "${NAME} --> download started"
 
