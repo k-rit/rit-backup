@@ -28,8 +28,8 @@ do
 	EX_DIR="${varAlias[4]}"
 	PW="${varAlias[1]}"
 	PW=`echo ${PW} | base64 --decode`
-	PORT=${varAlias[3]}
-	IP=${varAlias[2]}
+	PORT=${varAlias[2]}
+	IP=${varAlias[3]}
 	NAME=${varAlias[5]}
 	R_USER=${varAlias[0]}
 
