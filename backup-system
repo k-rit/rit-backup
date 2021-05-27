@@ -26,6 +26,9 @@ fstart $0
 MYSQL_DIR=/tmp/mysql_backup
 MYSQL_SINGLE_DIR=${MYSQL_DIR}/sql
 
+# set Temp path for apt
+APT_DIR=/tmp/apt_backup
+
 MYSQL_BEN=${System[MYSQL_BEN]}
 MYSQL_PW=`echo ${System[MYSQL_PW]} | base64 --decode`
 BACKUP_DIR=${System[BACKUP_DIR]}
@@ -103,6 +106,22 @@ tar -czpf ${MYSQL_DIR}/mysql-dir-$DATE.tar.gz -C / $SQL_DIR 1>/dev/null 2>/dev/n
 fstatus "The MYSQL-Directory-Backup has been successfully created"
 
 sleep 2
+
+###################################################################################
+# Backup the keys an list of installed programs
+
+if [ -d "${APT_DIR}" ]
+then
+	# remove the old MYSQL backup
+	rm ${APT_DIR}/* 1>/dev/null 2>/dev/null
+	fstatus "The old APT backup has been removed!"
+else
+	mkdir -p ${APT_DIR}
+fi
+
+dpkg --get-selections > ${APT_DIR}/Package.list
+cp -R /etc/apt/sources.list* ${APT_DIR}/
+apt-key exportall > ${APT_DIR}/Repo.keys
 
 ###################################################################################
 
