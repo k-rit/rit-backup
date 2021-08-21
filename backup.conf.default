@@ -65,6 +65,7 @@ IN_DIR = /data/backups
 # Copy use the same user / group
 USER = user
 GROUP = users
+SPEED_LIMIT = 5
 # num = download servers
 NUM = 3
 LOCAL_BACKUPS_NUM = 7
